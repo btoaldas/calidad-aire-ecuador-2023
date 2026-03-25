@@ -1,0 +1,6 @@
+tipo,zona,pm25_ug_m3,pm10_ug_m3,no2_ug_m3,so2_ug_m3,co_mg_m3
+industrial,costa,22.61,51.72,29.17,15.38,1.14
+industrial,sierra,26.37,56.49,30.59,12.23,1.21
+periurbana,sierra,12.47,30.39,12.7,3.08,0.52
+urbana,costa,15.61,35.91,18.9,4.07,0.72
+urbana,sierra,18.43,43.21,22.62,5.13,0.83

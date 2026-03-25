@@ -1,0 +1,204 @@
+{
+  "fuente": "Catálogo de estaciones de monitoreo de calidad del aire",
+  "total_estaciones": 18,
+  "estaciones": [
+    {
+      "id": "QUI-001",
+      "nombre": "Carapungo",
+      "ciudad": "Quito",
+      "provincia": "Pichincha",
+      "lat": -0.0986,
+      "lon": -78.4472,
+      "altitud": 2660,
+      "tipo": "urbana",
+      "zona": "sierra"
+    },
+    {
+      "id": "QUI-002",
+      "nombre": "Cotocollao",
+      "ciudad": "Quito",
+      "provincia": "Pichincha",
+      "lat": -0.1075,
+      "lon": -78.4975,
+      "altitud": 2739,
+      "tipo": "urbana",
+      "zona": "sierra"
+    },
+    {
+      "id": "QUI-003",
+      "nombre": "Belisario",
+      "ciudad": "Quito",
+      "provincia": "Pichincha",
+      "lat": -0.18,
+      "lon": -78.49,
+      "altitud": 2835,
+      "tipo": "urbana",
+      "zona": "sierra"
+    },
+    {
+      "id": "QUI-004",
+      "nombre": "Centro Histórico",
+      "ciudad": "Quito",
+      "provincia": "Pichincha",
+      "lat": -0.22,
+      "lon": -78.5125,
+      "altitud": 2820,
+      "tipo": "urbana",
+      "zona": "sierra"
+    },
+    {
+      "id": "QUI-005",
+      "nombre": "El Camal",
+      "ciudad": "Quito",
+      "provincia": "Pichincha",
+      "lat": -0.25,
+      "lon": -78.51,
+      "altitud": 2840,
+      "tipo": "industrial",
+      "zona": "sierra"
+    },
+    {
+      "id": "QUI-006",
+      "nombre": "Guamaní",
+      "ciudad": "Quito",
+      "provincia": "Pichincha",
+      "lat": -0.33,
+      "lon": -78.55,
+      "altitud": 3060,
+      "tipo": "periurbana",
+      "zona": "sierra"
+    },
+    {
+      "id": "GYE-001",
+      "nombre": "Centro Guayaquil",
+      "ciudad": "Guayaquil",
+      "provincia": "Guayas",
+      "lat": -2.1894,
+      "lon": -79.8891,
+      "altitud": 4,
+      "tipo": "urbana",
+      "zona": "costa"
+    },
+    {
+      "id": "GYE-002",
+      "nombre": "Norte Guayaquil",
+      "ciudad": "Guayaquil",
+      "provincia": "Guayas",
+      "lat": -2.15,
+      "lon": -79.92,
+      "altitud": 6,
+      "tipo": "urbana",
+      "zona": "costa"
+    },
+    {
+      "id": "GYE-003",
+      "nombre": "Durán Industrial",
+      "ciudad": "Guayaquil",
+      "provincia": "Guayas",
+      "lat": -2.17,
+      "lon": -79.83,
+      "altitud": 5,
+      "tipo": "industrial",
+      "zona": "costa"
+    },
+    {
+      "id": "CUE-001",
+      "nombre": "Centro Cuenca",
+      "ciudad": "Cuenca",
+      "provincia": "Azuay",
+      "lat": -2.8974,
+      "lon": -79.0045,
+      "altitud": 2550,
+      "tipo": "urbana",
+      "zona": "sierra"
+    },
+    {
+      "id": "CUE-002",
+      "nombre": "Parque Industrial",
+      "ciudad": "Cuenca",
+      "provincia": "Azuay",
+      "lat": -2.86,
+      "lon": -78.97,
+      "altitud": 2500,
+      "tipo": "industrial",
+      "zona": "sierra"
+    },
+    {
+      "id": "AMB-001",
+      "nombre": "Centro Ambato",
+      "ciudad": "Ambato",
+      "provincia": "Tungurahua",
+      "lat": -1.2491,
+      "lon": -78.6168,
+      "altitud": 2577,
+      "tipo": "urbana",
+      "zona": "sierra"
+    },
+    {
+      "id": "ESM-001",
+      "nombre": "Puerto Esmeraldas",
+      "ciudad": "Esmeraldas",
+      "provincia": "Esmeraldas",
+      "lat": 0.9592,
+      "lon": -79.6539,
+      "altitud": 15,
+      "tipo": "industrial",
+      "zona": "costa"
+    },
+    {
+      "id": "LOJ-001",
+      "nombre": "Centro Loja",
+      "ciudad": "Loja",
+      "provincia": "Loja",
+      "lat": -3.9931,
+      "lon": -79.2042,
+      "altitud": 2060,
+      "tipo": "urbana",
+      "zona": "sierra"
+    },
+    {
+      "id": "MAN-001",
+      "nombre": "Centro Manta",
+      "ciudad": "Manta",
+      "provincia": "Manabí",
+      "lat": -0.95,
+      "lon": -80.7333,
+      "altitud": 6,
+      "tipo": "urbana",
+      "zona": "costa"
+    },
+    {
+      "id": "RIO-001",
+      "nombre": "Centro Riobamba",
+      "ciudad": "Riobamba",
+      "provincia": "Chimborazo",
+      "lat": -1.6635,
+      "lon": -78.6546,
+      "altitud": 2754,
+      "tipo": "urbana",
+      "zona": "sierra"
+    },
+    {
+      "id": "SDO-001",
+      "nombre": "Centro Sto Domingo",
+      "ciudad": "Santo Domingo",
+      "provincia": "Sto Domingo",
+      "lat": -0.2532,
+      "lon": -79.1719,
+      "altitud": 625,
+      "tipo": "urbana",
+      "zona": "costa"
+    },
+    {
+      "id": "LAT-001",
+      "nombre": "Centro Latacunga",
+      "ciudad": "Latacunga",
+      "provincia": "Cotopaxi",
+      "lat": -0.9346,
+      "lon": -78.6158,
+      "altitud": 2750,
+      "tipo": "urbana",
+      "zona": "sierra"
+    }
+  ]
+}

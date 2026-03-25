@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+*.mmd
+puppeteer-config.json
+data/raw/poblacion_inec.zip
+node_modules/

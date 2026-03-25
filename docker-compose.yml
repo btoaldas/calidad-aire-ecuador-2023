@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  # PostgreSQL con Star Schema HEFESTO
+  postgres:
+    image: postgres:15-alpine
+    container_name: calidad_aire_db
+    environment:
+      POSTGRES_DB: calidad_aire_dw
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: cedia2023
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./docker/init.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ./docker/load_data.sql:/docker-entrypoint-initdb.d/02-data.sql
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d calidad_aire_dw"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Dashboard web interactivo
+  dashboard:
+    image: nginx:alpine
+    container_name: calidad_aire_dashboard
+    ports:
+      - "8085:80"
+    volumes:
+      - ./dashboards/index.html:/usr/share/nginx/html/index.html:ro
+      - ./data/gold:/usr/share/nginx/html/data:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  pgdata:
