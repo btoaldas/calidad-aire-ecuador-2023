@@ -1,0 +1,297 @@
+﻿Nombre del Estudiante: 
+Correo del estudiante:
+Cédula del estudiante:
+TAREA
+Requerimiento (Fintech)
+“Queremos que la app muestre el saldo del cliente actualizado al instante después de cada transacción.
+Necesitamos detectar transacciones sospechosas en menos de 2 segundos.
+Dirección quiere reportes trimestrales con tendencias: ingresos vs egresos por segmento y por canal (app/web).”
+________________
+
+
+GUÍA PASO A PASO (para entregar)
+1. Separación por “para qué se usa” (no usar la palabra ‘naturaleza’)
+Completar:
+Requerimiento
+	¿Para qué se usa? (acción inmediata / monitoreo / reporte)
+	¿Operación o análisis?
+	Saldo al instante
+	
+
+	
+
+	Detección sospechosa <2s
+	
+
+	
+
+	Reporte trimestral
+	
+
+	
+
+	
+
+
+
+Preguntas guía:
+* ¿Alguien debe actuar inmediatamente?
+
+* ¿Es para operar hoy o entender el pasado?
+
+* ¿Lo verá un cliente (operación) o dirección (análisis)?
+
+________________
+
+
+2. OLTP vs OLAP
+Parte del requerimiento
+	OLTP u OLAP
+	Justificación (1 línea)
+	Saldo al instante
+	
+
+	
+
+	Transacciones (compras, transferencias)
+	
+
+	
+
+	Detección sospechosa
+	
+
+	
+
+	Reporte trimestral
+	
+
+	
+
+	Regla guía:
+   * OLTP = transacción operativa
+
+   * OLAP = agregación/histórico para analizar
+
+________________
+
+
+3. Batch vs Streaming
+Necesidad
+	Batch o Streaming
+	Latencia esperada
+	Por qué
+	Saldo al instante
+	
+
+	
+
+	.
+	Detección de transacción Sospechosa
+	
+
+	
+
+	
+
+	Reporte trimestral
+	
+
+	
+
+	
+
+	Reglas guía:
+      * Si impacta en segundos → Streaming
+
+      * Si puede esperar → Batch
+
+________________
+
+
+4. Pipeline (FIPAC)
+Completar:
+Etapa FIPAC
+	Respuesta del estudiante
+	Fuentes
+	¿De dónde sale el dato?
+	Ingesta
+	¿Cómo se mueve? (batch/stream)
+	Procesamiento
+	¿Qué validaciones/reglas/agregaciones?
+	Almacenamiento
+	¿Dónde persiste para operar vs analizar?
+	Consumo
+	¿Quién lo usa y cómo?
+	
+
+Si no especifica, asumir.
+________________
+
+
+5. Conceptos técnicos aplicados
+Completar:
+Concepto
+	Cómo aplica en este caso (1–2 líneas)
+	Latencia
+	
+
+	Throughput
+	
+
+	Disponibilidad
+	
+
+	SLA
+	
+
+	Tolerancia a fallos
+	
+
+	Consistencia
+	
+
+	Escalabilidad (vertical/horizontal)
+	
+
+	Elasticidad
+	
+
+	
+
+Si no especifica, asumir.
+________________
+
+
+Formato de entrega
+         * 1 a 2 páginas
+
+         * No mencionar herramientas (AWS/Azure/etc.)
+________________
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EJEMPLO RESUELTO
+Requerimiento (Lenguaje de Negocio)
+Empresa de delivery:
+“Necesitamos ver en un dashboard el número de pedidos por ciudad cada 10 minutos.
+También queremos alertas inmediatas si un repartidor que tiene GPS se desvía de su ruta.
+Dirección ejecutiva solicita un informe mensual con tendencias de pedidos por ciudad y horarios pico.”
+________________
+
+
+Paso 1 — Separar “qué quiere” y “para qué”
+Requerimiento
+	¿Para qué se usa?
+	¿Es operación del momento o análisis?
+	Dashboard cada 10 min
+	Monitoreo del negocio
+	Análisis (casi en tiempo real)
+	Alertas por desvío
+	Actuar inmediatamente
+	Operación (tiempo real)
+	Informe mensual
+	Revisar desempeño histórico
+	Análisis (histórico)
+	________________
+
+
+Paso 2 — OLTP vs OLAP
+Parte del requerimiento
+	OLTP u OLAP
+	Justificación
+	Registro de pedidos
+	OLTP
+	Transacciones del día a día
+	GPS del repartidor
+	OLTP (eventos)
+	Eventos operacionales en tiempo real
+	Dashboard consolidado
+	OLAP
+	Agregados por ciudad, ventana temporal
+	Informe mensual
+	OLAP
+	Resumen histórico para dirección
+	________________
+
+
+Paso 3 — Batch vs Streaming
+Necesidad
+	Batch o Streaming
+	Latencia esperada
+	Por qué
+	Dashboard cada 10 min
+	Batch frecuente (micro-batch)
+	Minutos
+	No requiere segundos
+	Alerta desvío
+	Streaming
+	Segundos
+	Decisión inmediata
+	Informe mensual
+	Batch
+	Horas/días
+	Consolidación histórica
+	Regla aplicada:
+            * Si la decisión impacta en segundos → Streaming
+
+            * Si puede esperar consolidación → Batch
+
+________________
+
+
+Paso 4 — Pipeline (FIPAC)
+Etapa FIPAC
+	Qué entra / qué sale
+	Fuentes
+	BD de pedidos, DB app repartidor (GPS)
+	Ingesta
+	Micro-batch de pedidos al sistema analítico; streaming de GPS al sistema de alertas
+	Procesamiento
+	Limpieza/validación (pedidos), reglas de desvío (GPS), analisis por ciudad
+	Almacenamiento
+	BD OLTP para operación
+	Consumo
+	Dashboard BI; sistema de alertas; informe mensual
+	________________
+
+
+Paso 5 — Conceptos técnicos aplicados
+Concepto
+	Dónde aplica
+	Latencia
+	Alertas deben llegar en segundos
+	Throughput
+	Muchos GPS/pedidos por minuto
+	Disponibilidad
+	App y alertas no pueden caerse
+	Tolerancia a fallos
+	Si falla un nodo, alertas siguen
+	Consistencia
+	Operación (pedido/pago) fuerte; dashboard puede ser eventual
+	Escalabilidad horizontal
+	Crecer a más ciudades/repartidores
+	Elasticidad
+	Picos en horas de comida
+	SLA
+	Definir tiempos de alerta y disponibilidad
+	________________

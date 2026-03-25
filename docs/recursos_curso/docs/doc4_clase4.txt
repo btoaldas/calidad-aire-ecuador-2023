@@ -1,0 +1,2122 @@
+﻿🏗️ Sesión 2: Modelado de Datos (Data Modeling)
+🎨 Herramientas de Visualización: PlantUML y Mermaid
+En el proceso de modelado de datos, la comunicación visual es tan importante como la estructura. Las herramientas de Diagramas como Código (Diagrams as Code) como PlantUML y Mermaid han simplificado enormemente la creación y el mantenimiento de diagramas ER (Entidad-Relación) y de esquemas dimensionales.
+
+
+PlantUML y Mermaid permiten describir un diagrama (entidades, atributos, y relaciones) mediante una sintaxis de texto simple en lugar de usar un editor gráfico.
+
+
+¿Para qué sirven en el Modelado de Datos?
+1. Agilidad y Mantenimiento: Es más fácil versionar y auditar un archivo de texto plano que un archivo binario (.png o .vsdx). Los cambios en el modelo se reflejan instantáneamente al modificar el código.
+2. Documentación Automática: Permiten incrustar los diagramas directamente en la documentación técnica (como se ha visto en los ejemplos anteriores) o en sistemas de gestión de conocimiento (wikis, Notion, etc.).
+3. Claridad en la Comunicación: Facilitan a arquitectos, desarrolladores y analistas entender la estructura de la base de datos de un vistazo, evitando ambigüedades.
+
+
+¿Qué es el Modelado de Datos?
+Si la arquitectura es el plano de la ciudad, el Modelado de Datos es el diseño de los edificios. Determina cómo se estructuran las tablas, qué relación tienen entre sí y cómo se garantiza que el sistema sea eficiente.
+Modelar datos es el proceso de representar la estructura de la información de un dominio del mundo real para que pueda ser almacenada y gestionada en un sistema.
+
+
+¿Qué modelamos realmente?
+Cuando modelamos datos, estamos modelando:
+* Entidades → objetos del mundo real (Cliente, Producto, Estudiante)
+
+* Atributos → propiedades de esas entidades (nombre, apellido, fecha, estado, precio, cargo)
+   * Cliente (nombre, apellido)
+   * Pedido (fecha, estado)
+   * Producto (nombre, precio)
+   * Empleado (nombre, cargo)
+   * Sucursal (nombre, dirección)
+Restricciones → reglas del negocio (el precio no puede ser negativo y debe ser mayor a cero)
+   * Un Cliente debe tener un nombre y apellido.
+   * El precio de un Producto debe ser mayor a 0.
+   * Un Pedido debe tener al menos un Producto (contiene Producto).
+   * Un Empleado debe tener un cargo definido.
+
+Modelado como proceso iterativo:
+El modelado no es estático. Es:
+      * Iterativo
+
+      * Evolutivo
+
+      * Dependiente del contexto (puede ser modelado OLTP vs OLAP)
+Relación con Arquitectura de Datos
+Dentro de la arquitectura de datos, el modelado define:
+         * La estructura del almacenamiento
+
+         * La forma en que se integran los sistemas
+
+         * La eficiencia de consultas
+
+         * La base para analítica y BI
+
+Es uno de los pilares fundamentales de cualquier arquitectura de datos sólida.
+
+
+________________
+
+
+
+
+📐 Modelado Conceptual, Lógico y Físico
+Caso de Estudio (Contexto del Negocio)
+Una universidad necesita un sistema para gestionar su información académica.
+Reglas del negocio
+            * La universidad ofrece varias carreras (Ingeniería, Derecho, Medicina, etc.).
+  
+
+
+
+            * Cada carrera está compuesta por varios cursos.
+
+
+  
+
+            * Un estudiante se matricula en una sola carrera.
+  
+
+
+
+            * Una carrera puede tener muchos estudiantes.
+
+
+  
+
+            * Un profesor puede dictar uno o varios cursos.
+  
+
+
+
+            * Cada curso es dictado por un solo profesor.
+  
+
+
+
+            * Un estudiante puede inscribirse en varios cursos.
+  
+
+
+
+            * Un curso puede tener varios estudiantes inscritos.
+
+  
+
+Este texto es la base para todos los modelos posteriores.
+
+
+
+
+
+
+
+
+
+
+
+
+1. Modelo Conceptual (El "Qué")
+Es la visión de más alto nivel. Aquí no nos importa la tecnología, sólo la lógica del negocio.
+               * Objetivo: Identificar las entidades (objetos) y cómo se relacionan.
+               * Público: Stakeholders, Gerentes, dueños del negocio y analistas.
+               * Componentes: Entidades (ej. Cliente, Producto) y Relaciones (ej. el Cliente compra un Producto).
+               * Regla de oro: No se definen tipos de datos ni claves técnicas.
+               * Para modelar conceptualmente se pueden utilizar diagramas UML como el diagrama de clases o más comúnmente el diagrama entidad relación ER (Entidad Relación). A continuación se utiliza un diagrama de clases UML:
+
+  
+
+Estudiante se matricula en Carrera: Muchos Estudiantes (N) se matriculan en una única Carrera (1).
+Profesor dicta Curso: Un único Profesor (1) dicta muchos Cursos (N).
+Código PlantUML:
+@startuml
+
+
+rectangle "Estudiante" as E
+rectangle "Carrera" as C
+rectangle "Profesor" as P
+rectangle "Curso" as CU
+
+
+E  "N" -- "1"  C  : se matricula en
+P  "1" -- "N"  CU : dicta
+
+
+@enduml
+
+
+	Ejecutar este código en: PlantUML Editor Online - Free & Fast UML Diagram Tool | PlantText
+
+
+2. Modelo Lógico (El "Cómo")
+Previo a entender qué es el modelo lógico analiza el siguiente ejemplo:
+
+
+Ejemplo de datos de modelo lógico:
+
+
+Tabla: Estudiantes
+IdEstudiante (Clave Primaria o Primary Key)
+	Nombre
+	Apellido
+	Email
+	1
+	Sofía
+	Mendieta
+	sofia.mendieta@universidad.edu
+	2
+	Alejandro
+	Romero
+	alejandro.romero@universidad.edu
+	3
+	Valentina
+	Castro
+	valentina.castro@universidad.edu
+	
+
+
+
+
+
+Tabla: Cursos
+IdCurso (Clave Primaria o Primary Key)
+	NombreCurso
+	Creditos
+	101
+	Introducción a la Programación
+	4
+	102
+	Álgebra Lineal
+	5
+	103
+	Bases de Datos
+	4
+	104
+	Historia del Arte
+	3
+	
+
+Tabla: Inscripciones
+IdInscripcion
+	IdEstudiante (FK)
+	IdCurso (FK)
+	FechaInscripcion
+	NotaFinal
+	1
+	1
+	101
+	2025-09-01
+	9.5
+	2
+	2
+	101
+	2025-09-01
+	7.8
+	3
+	1
+	103
+	2025-09-02
+	8.9
+	4
+	3
+	102
+	2025-09-02
+	6.5
+	5
+	3
+	104
+	2025-09-03
+	9.2
+	
+
+Concepto previo: 
+Una clave primaria (Primary Key) es un atributo o un conjunto de atributos en una tabla de una base de datos que identifica de forma única a cada registro (fila) de esa tabla. Sus características principales son:
+               * Unicidad: No puede haber dos registros con el mismo valor de clave primaria.
+               * No nulidad: El valor de la clave primaria no puede ser nulo (vacío).
+               * Identificación: Sirve como el identificador principal para acceder a un registro específico.
+Generalmente esta clave primaria se genera automáticamente (1,2,3,...)
+               * Tabla: Estudiantes: La clave primaria es IdEstudiante. Cada valor (1, 2, 3) identifica de manera única a un estudiante. No puede haber dos estudiantes con el mismo IdEstudiante, ni puede ser un valor nulo.
+               * Tabla: Cursos: La clave primaria es IdCurso. Cada valor (101, 102, 103, 104) identifica un curso específico.
+               * Tabla: Inscripciones: La clave primaria es IdInscripcion. Es el identificador único para cada registro de inscripción.
+Qué es una clave foránea:
+Una clave foránea (Foreign Key) es un atributo o un conjunto de atributos en una tabla (la tabla "hija" o referenciadora) que hace referencia a la clave primaria de otra tabla (la tabla "padre" o referenciada). Su propósito es establecer y mantener un vínculo entre dos tablas. Sus características principales son:
+               * Vínculo: Crea una relación entre la tabla donde se define y la tabla a la que referencia.
+               * Referencia: Su valor debe coincidir con un valor existente en la clave primaria de la tabla referenciada (o ser nulo, dependiendo de las reglas de negocio).
+               * Integridad: Impide que se ingresen valores en la tabla hija que no existan en la tabla padre, manteniendo la coherencia de los datos.
+
+
+               * Tabla: Inscripciones: Esta tabla contiene dos claves foráneas que establecen vínculos con las otras dos tablas:
+               * IdEstudiante (FK): Esta es una clave foránea que hace referencia a la clave primaria IdEstudiante de la tabla Estudiantes. Esto asegura que solo se puedan registrar inscripciones para estudiantes que realmente existen en la tabla Estudiantes (Integridad Referencial). Por ejemplo, el valor 1 en IdEstudiante (FK) de Inscripciones se vincula al registro de Sofía Mendieta en la tabla Estudiantes.
+               * IdCurso (FK): Esta es una clave foránea que hace referencia a la clave primaria IdCurso de la tabla Cursos. Esto garantiza que solo se puedan inscribir estudiantes en cursos que existen en la tabla Cursos. Por ejemplo, el valor 101 en IdCurso (FK) de Inscripciones se vincula al curso "Introducción a la Programación" en la tabla Cursos.
+En resumen, las claves foráneas (IdEstudiante (FK) e IdCurso (FK)) en la tabla Inscripciones son cruciales para mantener la coherencia y las relaciones entre las tablas, impidiendo inscripciones a estudiantes o cursos inexistentes.
+En el modelo lógico, aquí empezamos a darle estructura. Es el puente entre el negocio y la técnica. Sigue siendo independiente de la base de datos (puedes usarlo para MySQL o PostgreSQL por igual).
+               * Objetivo: Definir la estructura de los datos y sus reglas.
+               * Público: Arquitectos de datos y desarrolladores.
+               * Componentes: Atributos (Nombre, Fecha, Precio), Claves Primarias (PK) y Claves Foráneas (FK), y se resuelven relaciones de muchos a muchos.
+               * Regla de oro: Aquí ya aplicamos la Normalización (que veremos más adelante).
+               * Aquí las tablas varios a varios se parten. Por ejemplo en el diagrama conceptual decimos un estudiante se matricula en varios cursos, aquí creamos la tabla inscripción o matrícula explícitamente.
+
+
+Modelado Lógico: 
+  
+
+@startuml
+hide methods
+hide circle
+skinparam classAttributeIconSize 0
+
+
+class Carrera {
+  id_carrera <<PK>>
+  nombre
+}
+
+
+class Estudiante {
+  id_estudiante <<PK>>
+  nombres
+  apellidos
+  fecha_nacimiento
+  id_carrera <<FK>>
+}
+
+
+class Profesor {
+  id_profesor <<PK>>
+  nombres
+  apellidos
+  especialidad
+}
+
+
+class Curso {
+  id_curso <<PK>>
+  nombre
+  creditos
+  id_carrera <<FK>>
+  id_profesor <<FK>>
+}
+
+
+class Inscripcion {
+  id_inscripcion <<PK>>
+  id_estudiante <<FK>>
+  id_curso <<FK>>
+  fecha_inscripcion
+  nota_final
+}
+
+
+Carrera "1" -- "N" Estudiante
+Carrera "1" -- "N" Curso
+Profesor "1" -- "N" Curso
+Estudiante "1" -- "N" Inscripcion
+Curso "1" -- "N" Inscripcion
+
+
+@enduml
+
+
+	Ejecutar este código en: PlantUML Editor Online - Free & Fast UML Diagram Tool | PlantText
+Aquí ya hablamos de claves y relaciones formales.
+3. Modelo Físico (El "Dónde")
+Es la implementación real en un motor de base de datos específico. 
+               * Objetivo: Optimizar el rendimiento y el almacenamiento.
+               * Público: DBAs y Desarrolladores de Datos.
+               * Componentes: Tipos de datos específicos (VARCHAR, INT, JSONB), índices, particiones, vistas y triggers.
+               * Regla de oro: Se adapta a las capacidades del motor (ej. Snowflake vs. Oracle).
+Ejemplo Implementación SQL – PostgreSQL
+
+
+CREATE TABLE carrera (
+    id_carrera SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL UNIQUE
+);
+
+
+CREATE TABLE profesor (
+    id_profesor SERIAL PRIMARY KEY,
+    nombres VARCHAR(100) NOT NULL,
+    apellidos VARCHAR(100) NOT NULL,
+    especialidad VARCHAR(100)
+);
+
+
+CREATE TABLE estudiante (
+    id_estudiante SERIAL PRIMARY KEY,
+    nombres VARCHAR(100) NOT NULL,
+    apellidos VARCHAR(100) NOT NULL,
+    fecha_nacimiento DATE,
+    id_carrera INT NOT NULL,
+    CONSTRAINT fk_estudiante_carrera
+        FOREIGN KEY (id_carrera)
+        REFERENCES carrera(id_carrera)
+        ON DELETE RESTRICT
+);
+
+
+CREATE TABLE curso (
+    id_curso SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    creditos INT NOT NULL CHECK (creditos > 0),
+    id_carrera INT NOT NULL,
+    id_profesor INT NOT NULL,
+    CONSTRAINT fk_curso_carrera
+        FOREIGN KEY (id_carrera)
+        REFERENCES carrera(id_carrera),
+    CONSTRAINT fk_curso_profesor
+        FOREIGN KEY (id_profesor)
+        REFERENCES profesor(id_profesor)
+);
+
+
+CREATE TABLE inscripcion (
+    id_inscripcion SERIAL PRIMARY KEY,
+    id_estudiante INT NOT NULL,
+    id_curso INT NOT NULL,
+    fecha_inscripcion DATE NOT NULL,
+    nota_final NUMERIC(4,2) CHECK (nota_final BETWEEN 0 AND 20),
+    CONSTRAINT fk_inscripcion_estudiante
+        FOREIGN KEY (id_estudiante)
+        REFERENCES estudiante(id_estudiante)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_inscripcion_curso
+        FOREIGN KEY (id_curso)
+        REFERENCES curso(id_curso)
+        ON DELETE CASCADE,
+    CONSTRAINT unique_estudiante_curso
+        UNIQUE (id_estudiante, id_curso)
+);
+
+
+CREATE INDEX idx_estudiante_carrera ON estudiante(id_carrera);
+CREATE INDEX idx_curso_carrera ON curso(id_carrera);
+CREATE INDEX idx_inscripcion_estudiante ON inscripcion(id_estudiante);
+CREATE INDEX idx_inscripcion_curso ON inscripcion(id_curso);
+
+
+	Aquí ya estamos a nivel físico.
+Nivel
+	Enfoque
+	Público principal
+	Nivel de detalle
+	Conceptual
+	Negocio
+	Stakeholders
+	Bajo
+	Lógico
+	Estructural
+	Arquitectos / Analistas
+	Medio
+	Físico
+	Técnico
+	DBAs / Ingenieros
+	Alto
+	🧠Idea clave 
+               * El modelo conceptual entiende el negocio.
+               * El modelo lógico organiza la estructura.
+               * El modelo físico implementa la solución.
+
+
+Ejemplo 1 - universidad
+
+
+               1. Conceptual: "La universidad necesita registrar a los Estudiantes, las Carreras que ofrece y quién enseña los Cursos". (Entidades de negocio y sus vínculos).
+               2. Lógico: "La tabla ESTUDIANTE tendrá una clave primaria id_estudiante, un campo nombre y una clave foránea id_carrera". (Estructura de tablas, claves y normalización).
+               3. Físico: "Crearemos la tabla estudiante en PostgreSQL usando el tipo SERIAL para el id_estudiante y un VARCHAR(100) para el nombre, con un índice sobre el campo nombre para acelerar las búsquedas". (Implementación técnica específica del motor).
+
+
+  
+
+
+
+Ejemplo 2 metáfora:
+               1. Conceptual: "Quiero una casa con 3 habitaciones y un patio". (Idea general).
+               2. Lógico: "El plano muestra que la habitación 1 mide 4x4m y se conecta al pasillo". (Dimensiones y estructura).
+               3. Físico: "Usaremos ladrillo de arcilla, cable de cobre calibre 12 y pintura marca X". (Materiales específicos).
+________________
+
+
+
+
+Cardinalidad (Las Reglas del Negocio)
+La cardinalidad define cuántas instancias de una entidad se relacionan con cuántas de otra. Esto es lo que suele confundir a los estudiantes, así que estos tres casos son clave:
+               1. Uno a Uno (1:1): Un Ciudadano tiene un solo Pasaporte. (Poco común, a veces se fusionan en una tabla).
+               2. Uno a Muchos (1:N): Un Cliente puede tener muchos Pedidos, pero un Pedido pertenece a un solo cliente. (Es el más común).
+               3. Muchos a Muchos (N:M): Un Estudiante puede inscribirse en muchos Cursos, y un Curso puede tener muchos Estudiantes.
+               * Es la más común en sistemas OLTP.
+________________
+
+
+
+
+Notación Crow´s Foot
+
+
+Cada línea de conexión tiene dos símbolos en sus extremos. Para leerla correctamente, siempre mira el extremo opuesto a la tabla desde donde empiezas.
+Los símbolos representan dos cosas: Cardinalidad (el máximo) y Opcionalidad (el mínimo).
+Los Símbolos Clave:
+               * La "Pata" (tres líneas): Significa Muchos (N).
+               * La Línea Recta (perpendicular): Significa Uno (1).
+               * El Círculo: Significa Cero (Opcional).
+Combinaciones Comunes:
+Símbolo
+	Significado
+	Lectura
+	--||
+	Uno y solo uno
+	Obligatorio, exactamente 1.
+	--|{
+	Uno o muchos
+	Obligatorio, al menos 1.
+	--o|
+	Cero o uno
+	Opcional, máximo 1.
+	--o{
+	Cero o muchos
+	Opcional, pueden ser N o ninguno.
+	________________
+
+
+2. Notación en Mermaid (ER Diagrams)
+Mermaid utiliza una sintaxis de texto plano muy intuitiva. La estructura básica es: 
+ENTIDAD1 relación ENTIDAD2 : "verbo".
+Sintaxis de los conectores:
+Para dibujar los símbolos anteriores en Mermaid, usamos estos caracteres:
+               * Lado de "Uno": | (uno obligatorio) o o (cero/opcional).
+               * Lado de "Muchos": { (muchos).
+               * Línea: -- (relación fuerte/identificativa) o .. (relación débil).
+Ejemplo práctico en código Mermaid:
+
+
+erDiagram
+    CLIENTE ||--o{ PEDIDO : "realiza"
+    PEDIDO ||--|{ DETALLE_PEDIDO : "contiene"
+    PRODUCTO ||--o{ DETALLE_PEDIDO : "aparece en"
+	
+
+
+
+¿Cómo se lee este código?
+               1. CLIENTE a PEDIDO: Un Cliente puede tener cero o muchos pedidos (o{), pero un Pedido debe pertenecer a uno y solo un cliente (||).
+               2. PEDIDO a DETALLE: Un Pedido debe tener al menos uno o muchos detalles (|{).
+
+
+________________
+
+
+
+
+Modelado Dimensional: qué es y para qué existe
+Concepto previo: Agregaciones
+Las agregaciones consisten en compilar y resumir datos detallados para obtener información a un nivel de análisis más alto.
+Una analogía útil es pensar en el reporte semanal de un restaurante.
+Un restaurante registra miles de transacciones cada día. Cada pedido contiene información detallada como:
+               * qué plato se pidió
+
+               * cuánto costó
+
+               * a qué hora se pidió
+
+               * qué mesero atendió
+
+               * qué mesa lo solicitó
+
+Estos registros representan datos transaccionales detallados.
+Debido al gran volumen de datos, analizar cada registro individualmente no permite ver tendencias fácilmente.
+Por eso se utilizan agregaciones.
+________________
+
+
+1. Datos transaccionales (detalle)
+Cada fila representa un evento individual: un plato pedido.
+
+
+ID Pedido
+	Hora
+	Mesa
+	Mesero
+	Plato
+	Precio
+	1
+	13:00
+	5
+	Juan
+	Ensalada César
+	8
+	2
+	13:05
+	8
+	María
+	Filete Mignon
+	18
+	3
+	13:07
+	2
+	Carlos
+	Pizza Margarita
+	12
+	4
+	13:10
+	4
+	Juan
+	Pizza Margarita
+	12
+	5
+	13:12
+	3
+	María
+	Ensalada César
+	8
+	6
+	13:15
+	7
+	Carlos
+	Pizza Margarita
+	12
+	Este tipo de tabla representa datos operacionales o transaccionales.
+Su granularidad es muy fina, porque cada fila corresponde a un evento específico.
+________________
+
+
+2. Proceso de agregación
+Para generar un reporte útil, el gerente agrupa los datos por tipo de plato y cuenta cuántas veces aparece cada uno.
+Visualmente:
+Pedido
+	Plato
+	1
+	Ensalada César
+	2
+	Filete Mignon
+	3
+	Pizza Margarita
+	4
+	Pizza Margarita
+	5
+	Ensalada César
+	6
+	Pizza Margarita
+	Proceso:
+Agrupar por: Plato
+Operación: Conteo
+________________
+
+
+3. Resultado agregado
+El resultado es un resumen de ventas por plato.
+Plato
+	Conteo semanal
+	Pizza Margarita
+	3
+	Ensalada César
+	2
+	Filete Mignon
+	1
+	Total
+	6
+	Interpretación:
+                  * Pizza Margarita = 3 significa que ese plato apareció 3 veces en los registros de pedidos.
+
+Cada una de esas apariciones corresponde a un evento individual:
+Pedido
+	Plato
+	1
+	Pizza Margarita
+	2
+	Pizza Margarita
+	3
+	Pizza Margarita
+	
+
+
+
+Operaciones de Agregación Comunes
+Las agregaciones se realizan mediante operaciones matemáticas o de conteo aplicadas sobre conjuntos de datos.
+A continuación se muestran las operaciones más utilizadas en análisis de datos.
+Operación
+	Significado
+	Aplicación Típica
+	SUM
+	Suma total de los valores
+	Cálculo de ventas totales, ingresos o cantidad de productos vendidos
+	AVG
+	Promedio de los valores
+	Precio promedio de venta o duración media de llamadas
+	COUNT
+	Conteo del número de registros
+	Número total de pedidos, clientes o transacciones
+	MIN / MAX
+	Valor mínimo o máximo
+	Precio más bajo o más alto registrado
+	COUNT DISTINCT
+	Conteo de valores únicos
+	Número de clientes únicos
+	Para entender estas operaciones, utilizaremos nuevamente el ejemplo del restaurante.
+________________
+
+
+Datos transaccionales de ejemplo
+Cada fila representa un plato pedido por un cliente.
+ID Pedido
+	Hora
+	Mesa
+	Mesero
+	Plato
+	Precio
+	1
+	13:00
+	5
+	Juan
+	Ensalada César
+	8
+	2
+	13:05
+	8
+	María
+	Filete Mignon
+	18
+	3
+	13:07
+	2
+	Carlos
+	Pizza Margarita
+	12
+	4
+	13:10
+	4
+	Juan
+	Pizza Margarita
+	12
+	5
+	13:12
+	3
+	María
+	Ensalada César
+	8
+	6
+	13:15
+	7
+	Carlos
+	Pizza Margarita
+	12
+	________________
+
+
+Ejemplos de Agregaciones
+COUNT – Conteo de pedidos
+Cuenta cuántas veces aparece cada plato.
+Plato
+	Total Pedidos
+	Pizza Margarita
+	3
+	Ensalada César
+	2
+	Filete Mignon
+	1
+	Interpretación:
+La Pizza Margarita fue pedida 3 veces.
+________________
+
+
+SUM – Ingreso total por plato
+Suma el precio de cada plato vendido.
+Plato
+	Ingreso Total
+	Pizza Margarita
+	36
+	Ensalada César
+	16
+	Filete Mignon
+	18
+	Ejemplo:
+Pizza Margarita
+12 + 12 + 12 = 36
+________________
+
+
+AVG – Precio promedio
+Calcula el precio promedio de los platos vendidos.
+Métrica
+	Valor
+	Precio promedio de todos los pedidos
+	11.67
+	Cálculo:
+(8 + 18 + 12 + 12 + 8 + 12) / 6 = 11.67
+________________
+
+
+MIN / MAX – Precio mínimo y máximo
+Permite identificar los valores extremos.
+Métrica
+	Valor
+	Precio mínimo
+	8
+	Precio máximo
+	18
+	Interpretación:
+                     * El plato más barato cuesta 8
+
+                     * El plato más caro cuesta 18
+
+________________
+
+
+COUNT DISTINCT – Conteo de valores únicos
+Cuenta valores sin repetir.
+Ejemplo: número de meseros únicos que atendieron pedidos.
+Métrica
+	Valor
+	Meseros distintos
+	3
+	Meseros:
+                        * Juan
+
+                        * María
+
+                        * Carlos
+
+Ejemplo Visual de Agregaciones y Modelado Dimensional (Universidad)
+Para entender el Modelado Dimensional (OLAP), es importante observar cómo los datos transaccionales de sistemas operacionales (OLTP) se transforman mediante agregaciones para permitir el análisis.
+________________
+
+
+1. El concepto de agregación
+La agregación consiste en transformar datos detallados en información resumida que facilite el análisis.
+En este ejemplo, partimos de una tabla transaccional donde se registra cada inscripción de un estudiante a un curso.
+________________
+
+
+Datos Transaccionales (OLTP)
+Tabla: REGISTRO_INSCRIPCIONES
+Granularidad (grano):
+Una fila representa la inscripción de un estudiante a un curso en una fecha específica.
+ID Registro
+	ID Estudiante
+	ID Curso
+	Fecha Inscripción
+	Pago
+	1001
+	E001
+	C101
+	2025-01-15
+	300.00
+	1002
+	E002
+	C101
+	2025-01-15
+	300.00
+	1003
+	E001
+	C203
+	2025-01-16
+	450.00
+	1004
+	E003
+	C101
+	2025-01-17
+	300.00
+	1005
+	E002
+	C305
+	2025-01-17
+	200.00
+	Este tipo de tabla es típico de un sistema transaccional (OLTP) donde cada evento del negocio queda registrado.
+Sin embargo, para análisis gerencial se requieren resúmenes de información.
+Por ejemplo:
+¿Cuántos estudiantes se inscribieron en cada curso?
+¿Cuánto ingreso generó cada curso?
+
+
+Resultado Agregado (Vista Analítica)
+ID Curso
+	Total Inscripciones
+	Total Ingresos
+	C101
+	3
+	900.00
+	C203
+	1
+	450.00
+	C305
+	1
+	200.00
+	Este resultado permite observar rápidamente:
+                           * El curso C101 tiene 3 inscripciones
+
+                           * Generó 900 en ingresos
+
+Este tipo de análisis es la base de los sistemas OLAP y Data Warehouse.
+
+
+2. Tablas de Hechos y Dimensiones (Esquema Estrella)
+El mismo proceso de negocio (inscripciones) puede modelarse en un esquema estrella, que es la estructura más común en Data Warehouses.
+Ejercicio Visual Completo: Transformación OLTP → OLAP
+Objetivo
+Comprender cómo un sistema transaccional (OLTP) se transforma en un modelo dimensional (OLAP) para facilitar el análisis.
+El ejercicio muestra:
+                              1. Base de datos OLTP normalizada
+
+                              2. Análisis de requerimientos
+
+                              3. Identificación de dimensiones y medidas
+
+                              4. Definición del grano
+
+                              5. Construcción del modelo estrella
+
+                              6. Mapa de transformación columna por columna
+
+                              7. Diagrama visual OLTP → OLAP
+
+________________
+
+
+1. Base de datos transaccional (OLTP)
+Sistema académico de una universidad.
+Cada inscripción registra:
+                                 * estudiante
+
+                                 * curso
+
+                                 * profesor
+
+                                 * carrera
+
+                                 * fecha
+
+                                 * pago
+
+________________
+
+
+Tabla ESTUDIANTE
+id_estudiante
+	nombre
+	fecha_nacimiento
+	ciudad
+	E001
+	Juan Pérez
+	2003-05-10
+	Quito
+	E002
+	Ana Gómez
+	1999-09-20
+	Guayaquil
+	E003
+	Luis Mora
+	2006-01-14
+	Quito
+	________________
+
+
+Tabla ADMISION_ESTUDIANTE
+id_estudiante
+	tipo_admision
+	E001
+	Nuevo
+	E002
+	Traslado
+	E003
+	Nuevo
+	________________
+
+
+Tabla CARRERA
+id_carrera
+	nombre_carrera
+	facultad
+	CA01
+	Ing. Sistemas
+	Ingeniería
+	CA02
+	Filosofía
+	Humanidades
+	________________
+
+
+Tabla ESTUDIANTE_CARRERA
+id_estudiante
+	id_carrera
+	E001
+	CA01
+	E002
+	CA01
+	E003
+	CA02
+	________________
+
+
+Tabla PROFESOR
+id_profesor
+	nombre
+	P01
+	Dra. Soler
+	P02
+	Msc. Ríos
+	P03
+	Dr. López
+	________________
+
+
+Tabla CURSO
+id_curso
+	nombre_curso
+	area
+	nivel
+	C101
+	Introducción a BD
+	Informática
+	Básico
+	C203
+	Ética Profesional
+	Humanidades
+	Intermedio
+	C305
+	Taller de Tesis
+	Posgrado
+	Avanzado
+	________________
+
+
+Tabla OFERTA_CURSO
+id_oferta
+	id_curso
+	id_profesor
+	periodo
+	O01
+	C101
+	P01
+	2025-1
+	O02
+	C203
+	P02
+	2025-1
+	O03
+	C305
+	P03
+	2025-1
+	________________
+
+
+Tabla INSCRIPCION (Transacción)
+id_inscripcion
+	id_estudiante
+	id_oferta
+	fecha
+	monto
+	1001
+	E001
+	O01
+	2025-01-15
+	300
+	1002
+	E002
+	O01
+	2025-01-15
+	300
+	1003
+	E001
+	O02
+	2025-01-16
+	450
+	1004
+	E003
+	O01
+	2025-01-17
+	300
+	1005
+	E002
+	O03
+	2025-02-02
+	200
+	________________
+
+
+2. Preguntas de negocio (Análisis de requerimientos)
+La universidad quiere responder:
+1️⃣ ¿Cuánto ingreso generó cada curso por mes?
+2️⃣ ¿Cuántas inscripciones hubo por carrera?
+3️⃣ ¿Cuál es el curso con más inscripciones?
+4️⃣ ¿Cuántos estudiantes únicos se inscribieron por mes?
+________________
+
+
+3. Identificación de MEDIDAS
+Palabras que indican cálculos:
+Palabra clave
+	Tipo de cálculo
+	ingreso
+	SUM
+	inscripciones
+	COUNT
+	estudiantes únicos
+	COUNT DISTINCT
+	Medidas identificadas:
+                                    * monto
+
+                                    * conteo de inscripciones
+
+________________
+
+
+4. Identificación de DIMENSIONES
+Palabras que indican contexto:
+Palabra
+	Dimensión
+	curso
+	DIM_CURSO
+	mes
+	DIM_TIEMPO
+	carrera
+	DIM_CARRERA
+	estudiante
+	DIM_ESTUDIANTE
+	profesor
+	DIM_PROFESOR
+	________________
+
+
+5. Definir el GRANO
+Pregunta obligatoria:
+¿Qué representa una fila en la tabla de hechos?
+Respuesta:
+Una inscripción de un estudiante a un curso en una fecha específica.
+________________
+
+
+6. Construcción del Modelo Estrella
+Tabla de Hechos
+FACT_INSCRIPCIONES
+inscripcion_sk
+	tiempo_sk
+	estudiante_sk
+	curso_sk
+	profesor_sk
+	carrera_sk
+	monto
+	1
+	20250115
+	501
+	10
+	301
+	701
+	300
+	2
+	20250115
+	502
+	10
+	301
+	701
+	300
+	3
+	20250116
+	501
+	12
+	302
+	701
+	450
+	4
+	20250117
+	503
+	10
+	301
+	702
+	300
+	5
+	20250202
+	502
+	15
+	303
+	701
+	200
+	________________
+
+
+Dimensiones
+DIM_ESTUDIANTE
+estudiante_sk
+	id_estudiante
+	nombre
+	ciudad
+	tipo_admision
+	501
+	E001
+	Juan Pérez
+	Quito
+	Nuevo
+	502
+	E002
+	Ana Gómez
+	Guayaquil
+	Traslado
+	503
+	E003
+	Luis Mora
+	Quito
+	Nuevo
+	________________
+
+
+DIM_CURSO
+curso_sk
+	codigo_curso
+	nombre_curso
+	area
+	nivel
+	10
+	C101
+	Introducción a BD
+	Informática
+	Básico
+	12
+	C203
+	Ética Profesional
+	Humanidades
+	Intermedio
+	15
+	C305
+	Taller de Tesis
+	Posgrado
+	Avanzado
+	________________
+
+
+DIM_PROFESOR
+profesor_sk
+	nombre
+	301
+	Dra. Soler
+	302
+	Msc. Ríos
+	303
+	Dr. López
+	________________
+
+
+DIM_CARRERA
+carrera_sk
+	nombre_carrera
+	facultad
+	701
+	Ing. Sistemas
+	Ingeniería
+	702
+	Filosofía
+	Humanidades
+	________________
+
+
+DIM_TIEMPO
+tiempo_sk
+	fecha
+	mes
+	trimestre
+	año
+	20250115
+	2025-01-15
+	Enero
+	Q1
+	2025
+	20250116
+	2025-01-16
+	Enero
+	Q1
+	2025
+	20250117
+	2025-01-17
+	Enero
+	Q1
+	2025
+	20250202
+	2025-02-02
+	Febrero
+	Q1
+	2025
+	________________
+
+
+7. Mapa de Transformación OLTP → OLAP
+Este paso es el más importante pedagógicamente.
+OLTP
+	OLAP
+	INSCRIPCION.id_estudiante
+	DIM_ESTUDIANTE.estudiante_sk
+	ESTUDIANTE.nombre
+	DIM_ESTUDIANTE.nombre
+	ADMISION_ESTUDIANTE.tipo_admision
+	DIM_ESTUDIANTE.tipo_admision
+	ESTUDIANTE_CARRERA.id_carrera
+	DIM_CARRERA.carrera_sk
+	CURSO.nombre_curso
+	DIM_CURSO.nombre_curso
+	OFERTA_CURSO.id_profesor
+	DIM_PROFESOR.profesor_sk
+	INSCRIPCION.fecha
+	DIM_TIEMPO.fecha
+	INSCRIPCION.monto
+	FACT_INSCRIPCIONES.monto
+	________________
+
+
+8. Diagrama Visual Completo
+OLTP (Normalizado)
+ESTUDIANTE
+    │
+ADMISION_ESTUDIANTE
+    │
+ESTUDIANTE_CARRERA
+    │
+CARRERA
+
+
+CURSO
+    │
+OFERTA_CURSO
+    │
+PROFESOR
+
+
+INSCRIPCION
+________________
+
+
+OLAP (Modelo Estrella)
+            DIM_ESTUDIANTE
+                   │
+DIM_TIEMPO ─── FACT_INSCRIPCIONES ─── DIM_CURSO
+                   │
+              DIM_CARRERA
+                   │
+              DIM_PROFESOR
+________________
+
+
+9. Consultas Analíticas
+Ingresos por curso
+SELECT
+c.nombre_curso,
+SUM(f.monto)
+FROM FACT_INSCRIPCIONES f
+JOIN DIM_CURSO c
+ON f.curso_sk = c.curso_sk
+GROUP BY c.nombre_curso;
+________________
+
+
+Inscripciones por carrera
+SELECT
+ca.nombre_carrera,
+COUNT(*)
+FROM FACT_INSCRIPCIONES f
+JOIN DIM_CARRERA ca
+ON f.carrera_sk = ca.carrera_sk
+GROUP BY ca.nombre_carrera;
+
+
+Ejemplo 2
+
+
+(OLTP realmente diferente de OLAP)
+1. Base de datos transaccional (OLTP)
+En un sistema universitario real, la información suele estar muy normalizada.
+ESTUDIANTE
+id_estudiante
+	nombre
+	fecha_nacimiento
+	ciudad
+	E001
+	Juan Pérez
+	2003-05-10
+	Quito
+	E002
+	Ana Gómez
+	1999-09-20
+	Guayaquil
+	E003
+	Luis Mora
+	2006-01-14
+	Quito
+	________________
+
+
+ADMISION_ESTUDIANTE
+id_estudiante
+	tipo_admision
+	fecha_admision
+	E001
+	Nuevo
+	2024-09-01
+	E002
+	Traslado
+	2024-09-01
+	E003
+	Nuevo
+	2024-09-01
+	________________
+
+
+CARRERA
+id_carrera
+	nombre_carrera
+	facultad
+	CA01
+	Ing. Sistemas
+	Ingeniería
+	CA02
+	Filosofía
+	Humanidades
+	________________
+
+
+ESTUDIANTE_CARRERA
+id_estudiante
+	id_carrera
+	E001
+	CA01
+	E002
+	CA01
+	E003
+	CA02
+	________________
+
+
+PROFESOR
+id_profesor
+	nombre
+	P01
+	Dra. Soler
+	P02
+	Msc. Ríos
+	P03
+	Dr. López
+	________________
+
+
+CURSO
+id_curso
+	nombre_curso
+	area
+	nivel
+	C101
+	Introducción a BD
+	Informática
+	Básico
+	C203
+	Ética Profesional
+	Humanidades
+	Intermedio
+	C305
+	Taller de Tesis
+	Posgrado
+	Avanzado
+	________________
+
+
+OFERTA_CURSO (qué profesor dicta qué curso en qué periodo)
+id_oferta
+	id_curso
+	id_profesor
+	periodo
+	O01
+	C101
+	P01
+	2025-1
+	O02
+	C203
+	P02
+	2025-1
+	O03
+	C305
+	P03
+	2025-1
+	________________
+
+
+INSCRIPCION (transacción)
+id_inscripcion
+	id_estudiante
+	id_oferta
+	fecha
+	monto
+	1001
+	E001
+	O01
+	2025-01-15
+	300
+	1002
+	E002
+	O01
+	2025-01-15
+	300
+	1003
+	E001
+	O02
+	2025-01-16
+	450
+	1004
+	E003
+	O01
+	2025-01-17
+	300
+	1005
+	E002
+	O03
+	2025-02-02
+	200
+	________________
+
+
+Problema del modelo OLTP
+Para responder una pregunta analítica como:
+¿Cuánto ingreso generó cada curso por mes y carrera?
+Se necesitaría unir muchas tablas:
+INSCRIPCION
+JOIN OFERTA_CURSO
+JOIN CURSO
+JOIN ESTUDIANTE
+JOIN ESTUDIANTE_CARRERA
+JOIN CARRERA
+JOIN PROFESOR
+Esto es lento y complejo para análisis.
+Por eso se crea un modelo dimensional.
+________________
+
+
+2. Transformación a Modelo Dimensional (OLAP)
+Tabla de Hechos
+FACT_INSCRIPCIONES
+inscripcion_sk
+	tiempo_sk
+	estudiante_sk
+	curso_sk
+	profesor_sk
+	carrera_sk
+	monto
+	1
+	20250115
+	501
+	10
+	301
+	701
+	300
+	2
+	20250115
+	502
+	10
+	301
+	701
+	300
+	3
+	20250116
+	501
+	12
+	302
+	701
+	450
+	4
+	20250117
+	503
+	10
+	301
+	702
+	300
+	5
+	20250202
+	502
+	15
+	303
+	701
+	200
+	Observa que esta tabla mezcla información de muchas tablas OLTP.
+________________
+
+
+Dimensiones
+DIM_ESTUDIANTE
+estudiante_sk
+	id_estudiante
+	nombre
+	ciudad
+	tipo_admision
+	501
+	E001
+	Juan Pérez
+	Quito
+	Nuevo
+	502
+	E002
+	Ana Gómez
+	Guayaquil
+	Traslado
+	503
+	E003
+	Luis Mora
+	Quito
+	Nuevo
+	Esta dimensión proviene de:
+ESTUDIANTE
++ ADMISION_ESTUDIANTE
+________________
+
+
+DIM_CURSO
+curso_sk
+	codigo_curso
+	nombre_curso
+	area
+	nivel
+	10
+	C101
+	Introducción a BD
+	Informática
+	Básico
+	12
+	C203
+	Ética Profesional
+	Humanidades
+	Intermedio
+	15
+	C305
+	Taller de Tesis
+	Posgrado
+	Avanzado
+	________________
+
+
+DIM_PROFESOR
+profesor_sk
+	nombre
+	301
+	Dra. Soler
+	302
+	Msc. Ríos
+	303
+	Dr. López
+	________________
+
+
+DIM_CARRERA
+carrera_sk
+	nombre_carrera
+	facultad
+	701
+	Ing. Sistemas
+	Ingeniería
+	702
+	Filosofía
+	Humanidades
+	________________
+
+
+DIM_TIEMPO
+tiempo_sk
+	fecha
+	mes
+	trimestre
+	año
+	20250115
+	2025-01-15
+	Enero
+	Q1
+	2025
+	20250116
+	2025-01-16
+	Enero
+	Q1
+	2025
+	20250117
+	2025-01-17
+	Enero
+	Q1
+	2025
+	20250202
+	2025-02-02
+	Febrero
+	Q1
+	2025
+	________________
+
+
+Visualización clara de la transformación
+OLTP (Normalizado)
+ESTUDIANTE
+ADMISION_ESTUDIANTE
+ESTUDIANTE_CARRERA
+CARRERA
+CURSO
+PROFESOR
+OFERTA_CURSO
+INSCRIPCION
+⬇ ETL / Integración
+OLAP (Modelo Estrella)
+          DIM_ESTUDIANTE
+               │
+DIM_TIEMPO ─ FACT_INSCRIPCIONES ─ DIM_CURSO
+               │
+          DIM_CARRERA
+               │
+          DIM_PROFESOR
+________________
+
+
+Por qué este modelo es mejor para análisis
+Ahora preguntas como:
+Ingresos por curso y mes
+requieren solo:
+FACT_INSCRIPCIONES
+JOIN DIM_CURSO
+JOIN DIM_TIEMPO
+Mucho más simple y rápido que el OLTP.
+
+
+
+
+¿Qué es el modelado dimensional?
+El modelado dimensional es una forma de estructurar datos pensada para análisis (OLAP/BI): reportes, tableros, KPIs, exploración, agregaciones, tendencias.
+Su idea central es simple:
+                                       * Guardar eventos medibles (ventas, pagos, matrículas, llamadas, envíos) en una tabla central.
+
+                                       * Rodearlos de contexto descriptivo (quién, qué, cuándo, dónde, cómo, bajo qué condiciones) en tablas alrededor.
+Esto optimiza:
+                                          * Facilidad de consulta (SQL más simple)
+
+                                          * Rendimiento en agregaciones. 
+
+                                          * Entendimiento por negocio (modelo intuitivo)
+
+En OLTP normalizamos para evitar redundancia; en OLAP aceptamos cierta redundancia para consultar más rápido y más fácil.
+________________
+
+
+Concepto base: “¿Qué queremos medir?” vs “¿Cómo lo describimos?”
+El pensamiento dimensional arranca con dos preguntas:
+                                             1. ¿Qué evento o proceso del negocio quiero analizar?
+ → eso define los hechos
+
+                                             2. ¿Desde qué perspectivas lo quiero analizar?
+ → eso define las dimensiones
+
+________________
+
+
+1) Tabla de Hechos (Fact)
+1.1 Qué es un hecho
+Un hecho es un evento del negocio que ocurre y que normalmente deja:
+                                                * una o más métricas (medidas)
+
+                                                * referencias a dimensiones que describen el contexto
+
+Ejemplos de hechos:
+                                                   * Una venta
+
+                                                   * Un pago
+
+                                                   * Una transacción bancaria
+
+                                                   * Una matrícula (como evento)
+
+                                                   * Un embarque/envío
+
+                                                   * Una atención en mesa de ayuda
+
+                                                   * Una lectura de sensor
+
+La tabla de hechos responde a:
+“Qué pasó” y “cuánto”.
+________________
+
+
+1.2 Qué contiene una tabla de hechos
+Una tabla de hechos casi siempre contiene:
+A) Claves hacia dimensiones (Foreign Keys)
+Son los “punteros” al contexto:
+                                                      * id_cliente
+
+                                                      * id_producto
+
+                                                      * id_tienda
+
+                                                      * id_tiempo
+
+                                                      * etc.
+
+En BI es muy común usar claves sustitutas (surrogate keys), no la clave natural del sistema fuente. (Ej.: cliente_sk en vez de id_cliente_erp).
+B) Medidas (Measures)
+Son los valores numéricos que queremos agregar:
+                                                         * cantidad
+
+                                                         * importe_total
+
+                                                         * costo
+
+                                                         * descuento
+
+                                                         * impuestos
+
+                                                         * duracion_segundos
+
+                                                         * etc.
+
+C) (A veces) atributos degenerados
+Un identificador que pertenece al evento pero no amerita dimensión:
+                                                            * número de factura
+
+                                                            * número de pedido
+Se guarda directamente en el hecho: numero_factura.
+
+________________
+
+
+1.3 Grano (Grain): el concepto más importante del modelado dimensional
+El grano (granularity) es la definición exacta de qué representa una fila en la tabla de hechos.
+Esto debe quedar clarísimo porque determina todo:
+                                                               * qué medidas son válidas
+
+                                                               * qué dimensiones debes incluir
+
+                                                               * qué consultas serán posibles
+
+Ejemplos de granos:
+                                                                  * “Una fila por línea de factura”
+(Factura #123, Producto X, 2 unidades…)
+
+                                                                  * “Una fila por venta por ticket”
+(un ticket como total, sin detalle por producto)
+
+                                                                  * “Una fila por transacción bancaria”
+
+                                                                  * “Una fila por lectura de sensor cada minuto”
+
+👉 Regla didáctica:
+Si no puedes decir en una frase qué representa una fila, el modelo no está listo.
+________________
+
+
+1.4 Tipos de tablas de hechos 
+a) Hechos transaccionales
+Un registro por evento (los más comunes).
+                                                                     * Venta
+
+                                                                     * Pago
+
+                                                                     * Envío
+
+✅ Buenas para “qué pasó” y “cuánto”.
+b) Hechos de snapshot periódico
+Un registro por período regular (diario, mensual).
+Ej.: “saldo diario por cuenta”.
+✅ Buenas para series de tiempo y estado por día.
+c) Hechos de snapshot acumulativo
+Registra el avance de un proceso con hitos.
+Ej.: “orden: creada → enviada → entregada”.
+✅ Buenas para medir tiempos de ciclo y etapas.
+________________
+
+
+2) Dimensiones (Dimension)
+2.1 Qué es una dimensión
+Una dimensión es una entidad descriptiva que da contexto a los hechos.
+Responde a:
+                                                                        * Quién
+
+                                                                        * Qué
+
+                                                                        * Cuándo
+
+                                                                        * Dónde
+
+                                                                        * Cómo
+
+                                                                        * Por qué (a veces como atributo categórico)
+
+Ejemplos de dimensiones:
+                                                                           * Cliente (segmento, edad, ciudad)
+
+                                                                           * Producto (categoría, marca)
+
+                                                                           * Tiempo (día, mes, trimestre, año)
+
+                                                                           * Tienda / Sucursal
+
+                                                                           * Vendedor
+
+                                                                           * Canal (web, tienda física)
+
+                                                                           * Geografía
+
+Las dimensiones están llenas de atributos textuales/categóricos que sirven para:
+                                                                              * filtrar
+
+                                                                              * agrupar
+
+                                                                              * segmentar
+
+                                                                              * hacer drill-down / roll-up
+
+________________
+
+
+2.2 Dimensión = “tabla ancha” (wide)
+A diferencia del OLTP normalizado, en dimensional una dimensión suele ser “ancha”:
+DimProducto:
+                                                                                 * producto_sk
+
+                                                                                 * sku
+
+                                                                                 * nombre
+
+                                                                                 * marca
+
+                                                                                 * categoría
+
+                                                                                 * subcategoría
+
+                                                                                 * tamaño
+
+                                                                                 * color
+
+                                                                                 * proveedor
+
+                                                                                 * etc.
+
+Esta desnormalización es intencional: evita joins innecesarios y hace el modelo más amigable.
+________________
+
+
+2.3 Dimensión Tiempo: casi siempre existe
+En BI la dimensión tiempo suele ser una tabla preconstruida con atributos como:
+                                                                                    * fecha
+
+                                                                                    * día de semana
+
+                                                                                    * nombre del mes
+
+                                                                                    * semana del año
+
+                                                                                    * trimestre
+
+                                                                                    * feriado (sí/no)
+
+                                                                                    * etc.
+
+Esto facilita reportes sin recalcular calendarios.
+________________
+
+
+2.4 Jerarquías en dimensiones
+Las dimensiones suelen tener jerarquías naturales para análisis:
+                                                                                       * Producto: categoría → subcategoría → producto
+
+                                                                                       * Geografía: país → provincia → ciudad
+
+                                                                                       * Tiempo: año → trimestre → mes → día
+
+Esto soporta análisis tipo:
+                                                                                          * “ventas por mes”
+
+                                                                                          * “ventas por trimestre”
+
+                                                                                          * “ventas por año”
+
+________________
+
+
+3) Diferencia exacta: Hecho vs Dimensión (sin ambigüedad)
+Regla práctica infalible
+                                                                                             * Si el dato es algo que mides y agregas (suma, promedio, conteo), es hecho.
+
+                                                                                             * Si el dato es algo que describe y te sirve para filtrar/segmentar, es dimensión.
+
+Ejemplos claros:
+                                                                                                * “Monto” → hecho
+
+                                                                                                * “Cantidad” → hecho
+
+                                                                                                * “Nombre del cliente” → dimensión
+
+                                                                                                * “Ciudad” → dimensión
+
+                                                                                                * “Fecha” → dimensión (o clave a dimensión tiempo)
+
+                                                                                                * “Estado del pedido” → normalmente dimensión (o atributo en dimensión pedido)
+
+
+ 
+________________
+
+
+
+
+
+
+
+
+________________
+
+
+4. Esquemas: Star vs. Snowflake
+Característica
+	Star Schema (Estrella)
+	Snowflake Schema (Copo de Nieve)
+	Estructura
+	Una Fact rodeada de Dimensiones simples.
+	Dimensiones normalizadas (se dividen en más tablas).
+	Performance
+	Muy rápida (pocos Joins).
+	Más lenta (muchos Joins).
+	Mantenimiento
+	Más difícil (datos duplicados).
+	Más fácil (datos organizados).
+	Uso Ideal
+	Data Warehouses modernos (Snowflake, BigQuery).
+	Sistemas con espacio de almacenamiento limitado.
+	________________
+
+
+  5. Slowly Changing Dimensions (SCD)
+En el análisis, la realidad cambia. Un cliente puede mudarse de ciudad. ¿Cómo manejamos ese cambio en el histórico?
+                                                                                                   * SCD Type 0 (Fixed): El dato nunca cambia (ej. Fecha de nacimiento).
+                                                                                                   * SCD Type 1 (Overwrite): Se sobrescribe el dato viejo. Perdemos el historial.
+                                                                                                   * SCD Type 2 (Add New Row): Se crea una nueva fila con una fecha de inicio y fin. Es el estándar de la industria para mantener historial.
+Regla Mental:
+                                                                                                   * Type 1: Solo me importa el presente.
+                                                                                                   * Type 2: Quiero ver cómo evolucionó el pasado (Time Travel).
+________________
+
+
+6. Cuadro Comparativo de Modelado
+Concepto
+	Modelado Relacional
+	Modelado Dimensional
+	Optimizado para
+	Escritura (Insert/Update)
+	Lectura (Select/Aggregation)
+	Término Técnico
+	Normalized
+	Denormalized
+	Objetivo
+	Evitar anomalías en los datos
+	Rapidez en Dashboards/IA
+	Unión de tablas
+	Muchos Joins complejos
+	Pocos Joins simples
+	________________
+
+
+7. Conceptos clave para el examen/entrevista
+Concepto
+	Definición Técnica
+	Ejemplo Práctico
+	Primary Key (PK)
+	Identificador único de una fila.
+	ID_Cliente: 4502.
+	Foreign Key (FK)
+	Llave que conecta una tabla con otra.
+	ID_Cliente dentro de la tabla de Ventas.
+	Granularity (Granularidad)
+	El nivel de detalle de la Fact Table.
+	¿La venta es por ticket o por producto individual?
+	Surrogate Key
+	Una llave artificial (usualmente numérica) para las dimensiones.
+	Un ID incremental (1, 2, 3...) en lugar del DNI real.
+	Bus Matrix
+	Matriz que identifica qué dimensiones comparten las tablas de hechos.
+	¿La dimensión "Tiempo" se usa tanto en Ventas como en Inventario?
+	
+
+📌 Modelo ER → Principalmente OLTP
+El modelo ER está diseñado para:
+                                                                                                   * Minimizar redundancia
+
+                                                                                                   * Garantizar integridad
+
+                                                                                                   * Soportar transacciones
+
+                                                                                                   * Optimizar consistencia
+
+Es decir, es ideal para sistemas transaccionales (OLTP):
+                                                                                                      * Bancos
+
+                                                                                                      * ERPs
+
+                                                                                                      * Sistemas académicos
+
+                                                                                                      * E-commerce
+
+________________
+
+
+📌 Para OLAP usamos Modelo Dimensional
+En analítica el objetivo cambia:
+OLTP
+	OLAP
+	Insertar
+	Analizar
+	Actualizar
+	Agregar
+	Normalizar
+	Desnormalizar
+	Integridad
+	Velocidad de consulta
+	En OLAP usamos:
+                                                                                                         * Modelo dimensional
+
+                                                                                                            * Hechos
+
+                                                                                                            * Dimensiones
+
+                                                                                                            * Esquema estrella
+
+                                                                                                            * Copo de nieve
+
+Aquí el enfoque es:
+                                                                                                               * Simplificar consultas
+
+                                                                                                               * Optimizar agregaciones
+
+                                                                                                               * Mejorar performance analítica
+Preguntas Frecuentes (FAQ) sobre Modelado Dimensional
+1. ¿Por qué no simplemente crear una Vista (View) en la base de datos transaccional (OLTP)?
+Si bien una vista puede realizar agregaciones y joins (uniones) sobre las tablas transaccionales, esta aproximación tiene serias limitaciones para el análisis a gran escala:
+
+
+Característica
+	Vista sobre OLTP (Transaccional)
+	Modelado Dimensional (OLAP/Data Warehouse)
+	Rendimiento
+	Lento. La vista recalcula los joins y agregaciones cada vez, afectando las transacciones en vivo (escritura).
+	Rápido. Los datos ya están pre-calculados, desnormalizados y optimizados para lectura.
+	Impacto OLTP
+	Alto. El sistema transaccional (que debe ser rápido para ventas, registros, etc.) se ralentiza al atender consultas analíticas pesadas.
+	Nulo. El análisis ocurre en un sistema separado (Data Warehouse).
+	Historial
+	Difícil de manejar. Los cambios en las dimensiones (ej. un cliente se muda) afectan el historial si no se implementa una lógica SCD compleja en la vista.
+	Nativo. El uso de SCD Type 2 en las dimensiones asegura que el historial se preserve fácilmente.
+	Complejidad
+	El SQL de las vistas analíticas se vuelve extremadamente complejo.
+	El SQL de consulta es simple (pocos joins directos de hecho a dimensión).
+	
+
+Conclusión: Las vistas OLTP son adecuadas para reportes simples en tiempo real, pero fallan catastróficamente para el análisis de grandes volúmenes de datos históricos o complejos.
+2. ¿Por qué no solo hacer una consulta grande (query) y jalar los datos directamente al sistema transaccional?
+El objetivo principal de un Data Warehouse y el Modelado Dimensional es separar la carga de trabajo.
+
+
+Razón Principal
+	Explicación
+	Separación de Cargas
+	Las bases de datos transaccionales (OLTP) están optimizadas para escritura rápida (insertar una venta, actualizar un registro). Las consultas analíticas (OLAP) son cargas de trabajo de lectura pesada. Ejecutar una consulta grande directamente en el OLTP consume recursos que deberían estar dedicados a las operaciones diarias del negocio, lo que resulta en lentitud y caídas del sistema.
+	Consolidación
+	El sistema transaccional suele estar fragmentado (varias bases de datos, sistemas legados). El Data Warehouse (con su modelo dimensional) sirve como el punto único de la verdad, donde todos los datos se limpian, transforman y consolidan de antemano para el análisis.
+	Optimización Analítica
+	El modelo dimensional (Star Schema) es intrínsecamente más rápido para la agregación que la estructura normalizada (ER Model) del sistema transaccional. La desnormalización reduce drásticamente la cantidad de joins necesarios.
+	
+
+En resumen: Jalar datos directamente de un OLTP para un análisis masivo es ineficiente y peligroso para la estabilidad del sistema operacional. El Modelado Dimensional provee una estructura robusta y dedicada para este fin.
+
+
+🧠 Tips Nemotécnicos y Ayudas de Memoria
+                                                                                                                  * Hechos vs Dimensiones (Las preguntas):
+                                                                                                                  * Los Hechos (Facts) responden a: "¿Cuánto?" (Ventas, Cantidad, Precio).
+                                                                                                                  * Las Dimensiones responden a: "¿Quién?, ¿Cuándo?, ¿Dónde?, ¿Qué?".
+                                                                                                                  * La Regla de la Estrella:
+                                                                                                                  * Si para sacar un reporte necesitas hacer más de 2 Joins para llegar a una descripción, no es una estrella pura, se está convirtiendo en un copo de nieve.
+                                                                                                                  * SCD Type 2: Recuerda el número 2 como "2 filas para la misma persona" (la vieja y la nueva).

@@ -1,0 +1,448 @@
+﻿Actividad: Modelado OLTP – Olist Brazilian E-Commerce
+Nombre del Estudiante:
+ Correo del estudiante:
+ Cédula del estudiante:
+Objetivo
+Diseñar los diagramas del sistema transaccional (OLTP) del marketplace Olist, construyendo:
+1. Diagrama Conceptual
+
+2. Diagrama Lógico (modelo relacional)
+
+3. Diagrama Físico (implementación en PostgreSQL u otro motor relacional)
+
+Entregable
+Subir:
+   * Tres imágenes (una por cada nivel de modelado), o
+
+   * Un archivo .zip que contenga las tres imágenes.
+
+El diagrama físico debe incluir:
+      * Tipos de datos.
+
+      * Claves primarias.
+
+      * Claves foráneas.
+
+      * Restricciones relevantes (NOT NULL, UNIQUE, CHECK, etc.). Si no conoce que significa añadir comentarios explicando qué significa cada una.
+
+________________
+
+
+Requisitos del Modelado
+El modelo debe:
+         1. Representar correctamente todas las entidades del negocio:
+
+            * Clientes
+
+            * Vendedores
+
+            * Productos
+
+            * Categorías
+
+            * Órdenes
+
+            * Ítems de orden
+
+            * Pagos
+
+            * Reseñas
+
+            * Información geográfica
+
+               2. Reflejar adecuadamente:
+
+                  * Cardinalidades.
+
+                  * Opcionalidad.
+
+                  * Dependencias.
+
+                  * Reglas del negocio descritas.
+
+                     3. Evitar:
+
+                        * Redundancias innecesarias.
+
+                        * Relaciones incorrectas.
+
+                        * Suposiciones no justificadas por el caso.
+
+                           4. Mantener coherencia entre:
+
+                              * Modelo conceptual.
+
+                              * Transformación lógica.
+
+                              * Implementación física.
+
+________________
+
+
+Preguntas Obligatorias de Análisis (deben reflejarse en el modelo)
+Sobre Clientes
+                                 1. ¿Por qué existe un identificador interno de cliente y un identificador de comprador real?
+                                 2. ¿Puede existir más de un registro interno para el mismo comprador real? ¿Cómo impacta esto en el diseño?
+                                 3. ¿La información de ubicación debe almacenarse directamente en cliente o aparte? Justifique con el modelo.
+Sobre Productos y Vendedores
+                                 1. ¿Existe una relación directa permanente entre Producto y Vendedor?
+                                 2. ¿Un producto puede ser vendido por múltiples vendedores? ¿El caso lo permite o lo restringe?
+Sobre Clientes
+                                 1. ¿Por qué existe un identificador interno de cliente y un identificador de comprador real?
+
+                                 2. ¿Puede existir más de un registro interno para el mismo comprador real? ¿Cómo impacta esto en el diseño?
+
+                                 3. ¿La información de ubicación debe almacenarse directamente en cliente o en una tabla aparte? Justifique con el modelo.
+Sobre Productos y Vendedores
+                                    4. ¿Existe una relación directa permanente entre Producto y Vendedor?
+
+                                    5. ¿Un producto puede ser vendido por múltiples vendedores? ¿El caso lo permite o lo restringe?
+
+Sobre Órdenes
+                                       7. ¿Cuál es la cardinalidad entre Cliente y Orden?
+
+                                       8. ¿Una orden puede existir sin ítems?
+
+                                       9. ¿Es correcto almacenar el total de la orden? ¿Es derivado o persistente?
+
+                                       10. ¿Cómo se modelan los estados de la orden?
+
+                                          * ¿Como atributo libre?
+
+                                          * ¿Como enumeración?
+
+                                          * ¿Como tabla independiente?
+
+Sobre Ítems de Orden
+                                             11. ¿Por qué no existe un campo “cantidad”?
+
+                                             12. ¿Cuál debería ser la clave primaria del ítem de orden?
+
+                                             13. ¿Por qué el precio se almacena en el ítem y no se toma directamente del producto?
+
+                                             14. ¿Dónde se conecta realmente Orden + Producto + Vendedor?
+
+Sobre Pagos
+                                                15. ¿Cuál es la cardinalidad entre Orden y Pago?
+
+                                                16. ¿Qué campo garantiza que múltiples pagos pertenezcan a la misma orden?
+
+                                                17. ¿Debe existir una restricción que evite duplicidad en el número secuencial de pago?
+
+Sobre Reseñas
+                                                   18. ¿Cuál es la cardinalidad entre Orden y Reseña?
+
+                                                   19. ¿Debe permitirse más de una reseña por orden?
+
+                                                   20. ¿La reseña depende de la orden o del cliente?
+
+Sobre Geolocalización
+                                                      21. ¿Debe el código postal abreviado ser clave primaria?
+
+                                                      22. Si puede haber múltiples registros para el mismo código postal, ¿qué implica esto para el diseño?
+
+                                                      23. ¿La relación entre cliente y geolocalización es obligatoria u opcional?
+Sobre Integridad y Consistencia
+                                                         24. ¿Qué claves foráneas son obligatorias?
+
+                                                         25. ¿Qué atributos deben ser NOT NULL?
+
+                                                         26. ¿Qué restricciones CHECK pueden definirse (por ejemplo, puntaje de reseña)?
+
+                                                         27. ¿Cómo garantizar que el número secuencial del ítem no se repita dentro de la misma orden?
+
+📘 Caso: Modelado OLTP – Olist Brazilian E-Commerce
+________________
+1. Contexto del Negocio
+Olist es una empresa brasileña que opera como marketplace digital dentro del sector retail.
+En el retail tradicional, una empresa compra productos y luego los vende directamente al consumidor final.
+En cambio, un marketplace como Olist no vende productos propios: actúa como intermediario entre múltiples vendedores independientes y clientes finales.Los vendedores independientes en un marketplace como Olist pueden ser:
+                                                            1. Pequeñas y medianas empresas (PyMEs) o negocios establecidos: Que desean ampliar su alcance más allá de su tienda física o sitio web propio.
+                                                            2. Emprendedores y personas físicas: Que fabrican o revenden productos a pequeña escala (artesanías, ropa, electrónica, etc.).
+                                                            3. Marcas que no tienen una fuerte presencia digital propia: Usando el marketplace como su principal canal de venta en línea.
+En esencia, son cualquier entidad (legal o individual) que se registra en la plataforma de Olist para listar y vender sus productos directamente a los clientes finales, utilizando la infraestructura y el tráfico del marketplace.
+Es decir:
+                                                            * Los vendedores publican productos.
+
+                                                            * Los clientes compran productos.
+
+                                                            * Olist gestiona la orden.
+
+                                                            * Olist coordina pagos.
+
+                                                            * Olist da seguimiento al proceso de entrega.
+
+                                                            * Olist permite que el cliente deje una reseña luego de recibir el producto.
+
+Una característica clave del modelo de negocio es que una sola compra puede incluir productos de distintos vendedores.
+El sistema que soporta esta operación es transaccional, orientado a registrar eventos en tiempo real:
+                                                               * Clientes
+
+                                                               * Órdenes
+
+                                                               * Ítems de orden
+
+                                                               * Pagos
+
+                                                               * Productos
+
+                                                               * Vendedores
+
+                                                               * Reseñas
+
+                                                               * Información de ubicación
+
+El objetivo es diseñar el modelo entidad–relación del sistema transaccional que permita representar fielmente este funcionamiento.
+________________
+
+
+2. Componentes del Negocio
+________________
+
+
+2.1 Clientes
+Un cliente es la persona que realiza compras en la plataforma.
+Cada cliente está identificado mediante:
+                                                                  * Un identificador interno del cliente
+
+                                                                  * Un identificador que representa al comprador real
+
+                                                                  * Código postal abreviado
+
+                                                                  * Ciudad
+
+                                                                  * Estado
+
+Es importante entender que:
+                                                                     * Un mismo comprador real puede aparecer con más de un registro interno.
+
+                                                                     * Un cliente puede realizar múltiples compras a lo largo del tiempo.
+
+
+La ubicación se maneja a nivel de código postal abreviado, ciudad y estado.
+________________
+
+
+2.2 Vendedores
+Los vendedores son empresas o personas que comercializan productos dentro del marketplace.
+Cada vendedor tiene:
+                                                                        * Identificador único
+
+                                                                        * Código postal abreviado
+
+                                                                        * Ciudad
+
+                                                                        * Estado
+
+Un vendedor puede vender múltiples productos y participar en muchas órdenes diferentes.
+________________
+
+
+2.3 Productos
+Los productos representan los artículos que se venden en la plataforma.
+Cada producto tiene:
+                                                                           * Identificador único
+
+                                                                           * Categoría
+
+                                                                           * Longitud del nombre
+
+                                                                           * Longitud de la descripción
+
+                                                                           * Cantidad de fotos
+
+                                                                           * Peso en gramos
+
+                                                                           * Largo, alto y ancho en centímetros
+
+La relación entre producto y vendedor ocurre únicamente cuando se realiza una venta.
+________________
+
+
+2.4 Categorías de Producto
+Cada producto pertenece a una categoría.
+Las categorías se identifican por su nombre en portugués.
+Existe además una lista de traducción que contiene:
+                                                                              * Nombre original de la categoría
+
+                                                                              * Nombre traducido al inglés
+________________
+
+
+2.5 Órdenes
+Una orden representa una compra realizada por un cliente.
+Cada orden contiene:
+                                                                                 * Identificador único
+
+                                                                                 * Cliente asociado
+
+                                                                                 * Estado de la orden
+
+                                                                                 * Fecha y hora de compra
+
+                                                                                 * Fecha de aprobación
+
+                                                                                 * Fecha en que fue entregada al transportista
+
+                                                                                 * Fecha en que fue entregada al cliente
+
+                                                                                 * Fecha estimada de entrega
+
+Estados posibles de la orden:
+                                                                                    * created
+
+                                                                                    * approved
+
+                                                                                    * invoiced
+
+                                                                                    * processing
+
+                                                                                    * shipped
+
+                                                                                    * delivered
+
+                                                                                    * canceled
+
+                                                                                    * unavailable
+
+Una orden:
+                                                                                       * Pertenece a un solo cliente.
+
+                                                                                       * Puede incluir productos de distintos vendedores.
+
+                                                                                       * Puede tener múltiples pagos.
+
+                                                                                       * Puede tener una reseña posterior.
+
+
+El valor total puede derivarse a partir de los artículos comprados y los pagos registrados.
+________________
+
+
+2.6 Ítems de Orden
+Una orden se compone de uno o varios ítems.
+Cada ítem representa un producto específico vendido por un vendedor específico dentro de esa orden.
+Cada ítem registra:
+                                                                                          * Identificador de la orden
+
+                                                                                          * Número secuencial del ítem dentro de la orden
+
+                                                                                          * Producto comprado
+
+                                                                                          * Vendedor que lo vendió
+
+                                                                                          * Fecha límite para despacho
+
+                                                                                          * Precio del producto en el momento de la compra
+
+                                                                                          * Valor del flete asociado a ese ítem
+
+Aspectos importantes:
+                                                                                             * No existe un campo explícito de cantidad.
+
+                                                                                             * Cada registro representa una unidad lógica del producto.
+
+                                                                                             * El precio almacenado es el precio al momento de la transacción.
+
+Este es el punto donde realmente se conecta:
+Orden + Producto + Vendedor.
+________________
+
+
+2.7 Pagos
+Una orden puede pagarse en una o varias transacciones.
+Cada pago registra:
+                                                                                                * Identificador de la orden
+
+                                                                                                * Número secuencial del pago
+
+                                                                                                * Tipo de pago
+
+                                                                                                * Número de cuotas
+
+                                                                                                * Valor pagado
+
+Tipos de pago posibles:
+                                                                                                   * Tarjeta de crédito
+
+                                                                                                   * Boleto
+
+                                                                                                   * Voucher
+
+                                                                                                   * Débito
+
+Una orden puede dividirse en varios pagos.
+________________
+
+
+2.8 Proceso Logístico
+El sistema no maneja una entidad independiente llamada “envío”.
+La información logística se representa mediante fechas dentro de la orden:
+                                                                                                      * Fecha de entrega al transportista
+
+                                                                                                      * Fecha de entrega al cliente
+
+                                                                                                      * Fecha estimada de entrega
+
+Además, cada ítem tiene una fecha límite para despacho.
+Aunque una orden pueda involucrar múltiples vendedores, las fechas finales de entrega se registran a nivel de la orden.
+________________
+
+
+2.9 Reseñas
+Después de recibir su compra, el cliente puede dejar una reseña.
+Cada reseña contiene:
+                                                                                                         * Identificador de reseña
+
+                                                                                                         * Orden asociada
+
+                                                                                                         * Puntaje de 1 a 5
+
+                                                                                                         * Título del comentario
+
+                                                                                                         * Comentario
+
+                                                                                                         * Fecha de creación
+
+                                                                                                         * Fecha de respuesta
+
+En la práctica, una orden puede tener cero o una reseña.
+________________
+
+
+2.10 Geolocalización
+Para análisis geográfico, el sistema cuenta con información asociada al código postal abreviado:
+                                                                                                            * Código postal abreviado
+
+                                                                                                            * Latitud
+
+                                                                                                            * Longitud
+
+                                                                                                            * Ciudad
+
+                                                                                                            * Estado
+
+Puede haber múltiples registros para un mismo código postal abreviado.
+Clientes y vendedores se asocian a esta información a través de su código postal.
+________________
+
+
+3. Alcance del Modelado
+Los estudiantes deberán diseñar un modelo entidad–relación que represente:
+                                                                                                               * Clientes
+
+                                                                                                               * Vendedores
+
+                                                                                                               * Productos
+
+                                                                                                               * Categorías
+
+                                                                                                               * Órdenes
+
+                                                                                                               * Ítems de orden
+
+                                                                                                               * Pagos
+
+                                                                                                               * Reseñas
+
+                                                                                                               * Información geográfica

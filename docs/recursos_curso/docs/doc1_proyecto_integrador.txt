@@ -1,0 +1,650 @@
+﻿Proyecto Integrador
+Curso: Fundamentos de la Arquitectura de Datos
+1. Descripción del proyecto integrador
+En este proyecto integrador, el estudiante deberá diseñar e implementar una solución básica de arquitectura de datos que permita tomar información desde distintas fuentes, organizarla en capas, transformarla y generar una salida final útil para responder preguntas del negocio.
+El proyecto debe evidenciar el uso de una arquitectura con capas Raw, Silver y Gold, un modelado inicial del dominio del negocio, transformación de datos con apoyo de prompting, y una salida final analítica que pueda ser consumida mediante archivos, vistas resumen, dashboard o una base de datos.
+El objetivo no es únicamente mover datos entre capas, sino construir una solución con sentido de negocio, bien documentada, técnicamente ordenada y alineada con preguntas reales de análisis.
+________________
+
+
+2. Objetivo del proyecto
+Construir una solución de arquitectura de datos que:
+* parta de al menos dos fuentes de datos,
+* organice los datos en capas,
+* aplique limpieza y transformación,
+* produzca una vista final analítica,
+* y responda preguntas del negocio definidas desde el inicio.
+________________
+
+
+3. Requisitos generales
+El proyecto debe incluir obligatoriamente:
+* descripción del caso de análisis,
+* objetivo del caso de analisis,
+* preguntas del negocio,
+* análisis de fuentes de datos, describir que son cada fuente de datos,
+* uso de al menos dos fuentes diferentes,
+* diseño conceptual,
+* diseño lógico,
+* arquitectura por capas Raw, Silver y Gold,
+* evidencia del uso de prompting,
+* resultados finales en Parquet o CSV,
+* y una entrega organizada en un portafolio de scripts.
+También habrá componentes opcionales que otorgarán puntaje extra.
+________________
+
+
+4. Fases del proyecto
+Fase 1. Definición del proyecto y modelado
+En esta fase el estudiante deberá definir claramente el proyecto que va a desarrollar.
+Debe incluir:
+* descripción del problema o caso de negocio,
+* objetivo del análisis,
+* preguntas del negocio que se desean responder,
+* descripción de las fuentes de datos que se utilizarán,
+* justificación de por qué esas fuentes son útiles para el proyecto.
+Requisito mínimo de fuentes
+El proyecto debe trabajar con al menos dos fuentes de datos.
+Estas fuentes pueden ser, por ejemplo:
+* CSV + JSON
+* CSV + API
+* JSON + base de datos
+* Excel + CSV
+* base de datos + archivo plano
+No es obligatorio que las fuentes tengan el mismo formato. De hecho, se recomienda que el estudiante trabaje con fuentes de distinta naturaleza para enriquecer el proyecto.
+________________
+
+
+Fase 1A. Modelo conceptual
+El estudiante deberá construir un modelo conceptual para entender el negocio.
+Este modelo tiene como propósito representar las entidades principales del dominio, sus atributos más importantes y la forma en que se relacionan.
+Para este proyecto, el modelo conceptual puede realizarse usando una de estas dos opciones:
+* Modelo conceptual de alto nivel
+* Diagrama de clases
+Importante
+El modelo conceptual no busca representar todavía detalles técnicos de implementación, sino ayudar a comprender el negocio, sus objetos principales y sus relaciones.
+________________
+
+
+Fase 1B. Modelo lógico
+Además del modelo conceptual, el estudiante deberá presentar un modelo lógico.
+En este punto ya se espera una representación más estructurada de cómo está organizada la información, por ejemplo:
+* tablas o entidades lógicas,
+* atributos,
+* primary keys,
+* relaciones entre tablas,
+* cardinalidad,
+* estructura lógica de integración.
+Importante
+El modelo lógico todavía no es el modelo físico.
+Por tanto, en esta fase no es necesario definir detalles como:
+* tipos de datos físicos definitivos,
+* particionamiento,
+* índices,
+* configuración del motor,
+* optimizaciones físicas específicas.
+________________
+
+
+Herramienta para diagramas
+Los diagramas deben realizarse con Mermaid, ya sea en:
+* Antigravity, o
+* una herramienta online compatible.
+* PlantUML
+Entregable requerido
+Además del código Mermaid, se debe entregar la imagen o captura del diagrama.
+________________
+
+
+Fase 2. Arquitectura por capas
+El proyecto debe organizarse en estas capas:
+* Raw
+* Silver
+* Gold
+Raw
+Contiene los datos tal como llegan desde la fuente, con cambios mínimos o sin transformación.
+Silver
+Contiene la limpieza y transformación intermedia.
+La capa Silver puede dividirse en varias subcapas si el estudiante lo considera necesario. Por ejemplo:
+* una subcapa para limpieza,
+* otra para integración,
+* otra para reglas de negocio.
+No existe un número obligatorio de subcapas. Lo importante es que estén bien explicadas y justificadas.
+Gold
+Contiene la salida final para consumo analítico.
+La capa Gold puede ser:
+* una vista final unificada,
+* varias vistas resumen,
+* varios marts,
+* o una estructura analítica más elaborada.
+No es obligatorio dividir Gold en subcapas.
+________________
+
+
+Fase 3. Uso de prompting
+El estudiante deberá aplicar prompting como apoyo en el proyecto.
+Esto puede utilizarse para:
+* limpiar datos,
+* proponer reglas de transformación,
+* generar scripts,
+* revisar calidad de datos,
+* tipar columnas,
+* unir fuentes,
+* documentar procesos.
+________________
+
+
+ 
+ 
+Fase 4. Vista final y resultado analítico
+El proyecto debe terminar con una salida que responda las preguntas del negocio planteadas al inicio.
+Opción obligatoria
+Generar una o varias vistas resumen o datasets finales en la capa Gold.
+Opción recomendada con puntaje extra
+Construir un Star Schema con metodología Hefesto.
+Esto no es obligatorio, pero dará puntaje extra.
+________________
+
+
+5. Entrega final de datos
+Obligatorio
+El proyecto debe entregar como resultado final al menos uno de los siguientes formatos en la capa Gold:
+* Parquet
+* CSV
+Opcional con puntaje extra
+También se puede cargar la salida final a:
+* Supabase
+* PostgreSQL en Docker
+* una base de datos en la nube
+________________
+
+
+6. Visualización o consumo final
+Opción opcional con puntaje extra
+Si el estudiante carga sus resultados a una base de datos, podrá además conectar esa base a un MCP en herramientas como:
+* Antigravity
+* Claude
+* ChatGPT
+* u otras compatibles
+Esto es opcional y da puntaje extra.
+Alternativa esperada si no hace MCP
+Si no realiza conexión a MCP, deberá generar al menos un dashboard en Antigravity usando los archivos finales de la capa Gold.
+________________
+
+
+7. Qué es obligatorio y qué es opcional
+Obligatorio
+* descripción del proyecto
+* objetivo del análisis
+* preguntas del negocio
+* análisis de fuentes de datos
+* uso de al menos dos fuentes
+* modelo conceptual
+* modelo lógico
+* diagramas en Mermaid con imagen
+* capas Raw, Silver y Gold
+* transformación entre capas
+* vista final o vistas resumen
+* archivos finales en Parquet o CSV
+* dashboard en Antigravity si no hay MCP
+* portafolio final de entrega
+Opcional con puntaje extra no obligatorias
+* Star Schema con metodología Hefesto
+* carga a Supabase, o una base de datos en cloud o PostgreSQL en Docker
+* conexión a MCP
+* dashboards adicionales
+* subcapas avanzadas bien justificadas
+________________
+
+
+8. Estructura sugerida de entrega
+integrative_project/
+│
+├── README.md
+├── docs/
+│   ├── project_description.pdf
+│   ├── conceptual_diagram.png
+│   ├── logical_diagram.png
+│  
+│
+├── data/
+│   ├── raw/
+│   ├── silver/
+│   └── gold/
+│
+├── scripts/
+│   ├── 01_ingestion.py
+│   ├── 02_cleaning.py
+│   ├── 03_transformation.py
+│   ├── 04_gold_layer.py
+│   └── 05_export.py
+│
+├── notebooks/ (optional)
+│
+└── dashboards/
+        ├── dashboard_screenshot_01.png
+        └── dashboard_screenshot_02.png
+Aclaraciones sobre la estructura
+* project_description.pdf puede incluir en un mismo documento:
+   * descripción del proyecto,
+   * objetivo,
+   * preguntas del negocio,
+   * y descripción de fuentes
+* los datos de trabajo deben ir dentro de data/
+* los resultados finales tabulares deben quedar en data/gold/
+* los dashboards, capturas o salidas visuales deben ir en dashboards/ (en caso de no conectar MCP)
+* si usan notebooks, deben ir en notebooks/ (optional)
+________________
+
+
+9. Rúbrica de evaluación sobre 40 puntos
+Criterio de evaluación
+	Puntaje
+	Descripción del criterio
+	Excelente
+	Bueno
+	Básico
+	Insuficiente
+	Definición del proyecto y preguntas del negocio
+	5 pts
+	Claridad del caso, objetivo y preguntas
+	Proyecto claro, bien enfocado y con preguntas precisas
+	Proyecto claro con pequeños vacíos
+	Proyecto entendible pero general
+	Proyecto confuso o sin preguntas claras
+	Análisis de fuentes de datos
+	5 pts
+	Selección, descripción y pertinencia de fuentes
+	Fuentes muy bien descritas y justificadas; se evidencia el uso de al menos dos fuentes
+	Fuentes correctas con explicación suficiente
+	Fuentes poco explicadas o débil integración entre ellas
+	Fuentes confusas, insuficientes o no pertinentes
+	Modelo conceptual y modelo lógico
+	5 pts
+	Calidad y claridad de diagramas
+	Diagramas completos, claros y coherentes; el conceptual representa bien el negocio y el lógico estructura correctamente PK y relaciones
+	Diagramas correctos con pequeños detalles
+	Diagramas parciales o poco claros
+	Diagramas ausentes o incorrectos
+	Definición de capas
+	5 pts
+	Organización de Raw, Silver y Gold
+	Capas muy bien definidas y justificadas
+	Capas bien definidas
+	Capas presentes pero poco claras
+	Capas mal definidas o ausentes
+	Uso de prompting
+	5 pts
+	Aplicación y evidencia del prompting
+	Prompts útiles, bien documentados y aplicados
+	Buen uso con evidencia suficiente
+	Uso limitado o poco claro
+	Sin evidencia real
+	Transformación y calidad del flujo
+	5 pts
+	Paso entre capas y consistencia técnica
+	Flujo claro, ordenado y bien implementado
+	Flujo correcto con pocos errores
+	Flujo parcial o débil
+	Flujo incompleto o inconsistente
+	Vista final y respuesta al negocio
+	5 pts
+	Utilidad de la capa Gold
+	Responde claramente al negocio
+	Responde la mayor parte
+	Responde parcialmente
+	No responde al objetivo
+	Organización de la entrega
+	5 pts
+	Claridad del portafolio final
+	Entrega muy ordenada y profesional
+	Entrega clara
+	Entrega funcional pero desordenada
+	Entrega incompleta o confusa
+	Total base: 40 puntos
+________________
+
+
+10. Puntaje extra
+Elemento opcional
+	Puntaje extra
+	Star Schema con metodología Hefesto
+	+2 pts
+	Carga a Supabase
+	+1 pt
+	Carga a PostgreSQL en Docker
+	+1 pt
+	Conexión a MCP
+	+2 pts
+	Dashboard adicional o visualización destacada
+	+1 pt
+	________________
+
+
+11. Forma de entrega
+El estudiante deberá entregar el proyecto en un portafolio de scripts y evidencias, en una de estas modalidades:
+* archivo .zip
+* repositorio en GitHub
+La entrega debe estar organizada, con nombres claros, y debe permitir revisar fácilmente el flujo completo del proyecto.
+________________
+
+
+12. Ejemplo de cómo podría quedar
+Título del proyecto
+Sales Analysis for a Retail Store
+Descripción del proyecto
+Una tienda minorista desea analizar su operación comercial para entender mejor el comportamiento de sus ventas, clientes y productos. Actualmente dispone de información en distintas fuentes y no cuenta con una estructura analítica que le permita responder preguntas clave del negocio de manera rápida y confiable.
+Para este proyecto se propone construir una arquitectura de datos que permita integrar, limpiar y transformar la información hasta obtener una capa Gold con datasets listos para análisis y visualización.
+Objetivo
+Construir una arquitectura de datos que permita integrar información comercial y generar vistas analíticas para apoyar decisiones sobre ventas, clientes y productos.
+Preguntas del negocio
+* ¿Qué categorías generan más ingresos?
+* ¿Qué ciudades concentran más ventas?
+* ¿Qué clientes compran con mayor frecuencia?
+* ¿Cómo evolucionan las ventas por mes?
+Fuentes de datos analizadas
+Fuente 1: CSV
+Archivo: sales.csv
+Campos:
+* sale_id
+* date
+* customer_id
+* product_id
+* city
+* quantity
+* unit_price
+* channel
+Fuente 2: JSON
+Archivo: customers.json
+Campos:
+* customer_id
+* customer_name
+* age
+* gender
+* city
+* segment
+Fuente 3: CSV opcional
+Archivo: products.csv
+Campos:
+* product_id
+* product_name
+* category
+* brand
+________________
+
+
+Ejemplo de modelo conceptual en Mermaid
+Este modelo sirve para entender el negocio.
+erDiagram
+    CUSTOMER ||--o{ SALE : makes
+    SALE ||--|{ PRODUCT : includes
+    PRODUCT }o--|| CATEGORY : belongs_to
+    STORE ||--o{ SALE : registers
+	 
+________________
+
+
+Ejemplo de modelo lógico en Mermaid
+Aquí ya se representan claves y relaciones lógicas.
+erDiagram
+        CUSTOMER {
+            int customer_id PK
+            string customer_name
+            int age
+            string gender
+            string city
+            string segment
+        }
+
+        PRODUCT {
+            int product_id PK
+            string product_name
+            string category
+            string brand
+        }
+
+        SALE {
+            int sale_id PK
+            int customer_id FK
+            int product_id FK
+            date sale_date
+            string city
+            string channel
+            int quantity
+            float unit_price
+            float total_amount
+        }
+
+        CUSTOMER ||--o{ SALE : customer_id
+        PRODUCT ||--o{ SALE : product_id
+	 
+ 
+________________
+
+
+Ejemplo de capas
+Raw
+* data/raw/sales.csv
+* data/raw/customers.json
+* data/raw/products.csv
+Silver (no es necesario todas estas capas)
+* data/silver/cleaned/sales_cleaned.parquet
+* data/silver/cleaned/customers_cleaned.parquet
+* data/silver/cleaned/products_cleaned.parquet
+* data/silver/enriched/sales_enriched.parquet
+Gold
+* data/gold/sales_by_category.parquet
+* data/gold/monthly_sales.csv
+* data/gold/frequent_customers.csv
+________________
+
+
+13. Ejemplos de prompts en español listos para Antigravity
+A continuación se muestran ejemplos de prompts más detallados, puede probarlos o adaptarlos dentro de Antigravity.
+________________
+
+
+Prompt 1. Perfilado inicial de una fuente CSV
+Objetivo: entender estructura, calidad y posibles problemas del archivo.
+Prompt:
+Analiza el archivo sales.csv como una fuente de datos para un proyecto de arquitectura de datos.
+Necesito que identifiques:
+1. nombre de las columnas,
+2. posible significado de cada columna,
+3. tipo de dato esperado para cada una,
+4. posibles problemas de calidad de datos,
+5. columnas clave para identificar registros,
+6. columnas que podrían servir para cruces con otras fuentes,
+7. reglas sugeridas de limpieza para una capa Silver.
+Devuélveme la respuesta en formato estructurado con estas secciones:
+* resumen de la fuente,
+* diccionario de columnas,
+* problemas detectados,
+* reglas de limpieza sugeridas,
+* columnas candidatas para primary key o foreign key.
+________________
+
+
+Prompt 2. Perfilado inicial de una fuente JSON
+Objetivo: entender una fuente semiestructurada.
+Prompt:
+Analiza el archivo customers.json como parte de un proyecto de arquitectura de datos.
+Quiero que revises la estructura del JSON e identifiques:
+1. campos disponibles,
+2. campos obligatorios y opcionales,
+3. tipo de dato esperado por campo,
+4. posibles inconsistencias de formato,
+5. campos útiles para relacionar esta fuente con otras,
+6. reglas recomendadas para normalizar esta fuente antes de pasarla a Silver.
+Además, explícame si esta fuente parece estar a nivel de cliente, transacción, evento u otra granularidad.
+Presenta el resultado en forma de tabla o lista estructurada.
+________________
+
+
+Prompt 3. Reglas de limpieza para pasar de Raw a Silver
+Objetivo: definir limpieza concreta.
+Prompt:
+Tengo una fuente de datos en capa Raw y necesito preparar su paso a Silver.
+A partir de las columnas del archivo sales.csv, genera una propuesta de limpieza detallada.
+Considera al menos lo siguiente:
+* manejo de valores nulos,
+* tratamiento de duplicados,
+* normalización de nombres de ciudad,
+* conversión de fechas,
+* validación de columnas numéricas,
+* detección de valores fuera de rango,
+* estandarización de nombres de columnas.
+Devuélveme la respuesta en formato de pasos ordenados, indicando:
+1. problema detectado,
+2. regla de limpieza sugerida,
+3. ejemplo de transformación,
+4. justificación de la regla.
+Al final, resume cuáles transformaciones deberían ser obligatorias antes de crear un archivo limpio en Silver.
+________________
+
+
+ 
+ 
+Prompt 4. Integración de dos fuentes
+Objetivo: unir fuentes correctamente.
+Prompt:
+Estoy trabajando con dos fuentes:
+* sales.csv
+* customers.json
+Quiero integrarlas en una capa Silver.
+Ayúdame a definir:
+1. qué campo o campos deberían usarse para unir ambas fuentes,
+2. qué validaciones debo hacer antes del cruce,
+3. qué problemas podrían ocurrir al hacer el join,
+4. qué columnas conviene conservar en el dataset integrado,
+5. qué nuevas columnas analíticas convendría crear.
+Además, propón una estructura final para el dataset integrado y explícame qué granularidad tendría el resultado.
+________________
+
+
+Prompt 5. Generación de script de limpieza
+Objetivo: apoyo para scripting.
+Prompt:
+Genera un script en Python, claro y comentado, para leer el archivo sales.csv, aplicar limpieza básica y guardar el resultado en formato Parquet dentro de data/silver/cleaned.
+El script debe incluir:
+* lectura del archivo,
+* renombrado de columnas en formato snake_case,
+* eliminación de duplicados,
+* manejo básico de nulos,
+* conversión de la columna de fecha,
+* validación de columnas numéricas,
+* creación de una columna total_amount como quantity * unit_price,
+* exportación a Parquet.
+Usa nombres de archivo en inglés y agrega comentarios para que un estudiante pueda entender el flujo.
+________________
+
+
+Prompt 6. Generación de script de integración
+Objetivo: unir datos limpios.
+Prompt:
+Genera un script en Python para integrar los archivos limpios:
+* data/silver/cleaned/sales_cleaned.parquet
+* data/silver/cleaned/customers_cleaned.parquet
+El cruce debe realizarse usando customer_id.
+Quiero que el script:
+* valide que la llave exista en ambos datasets,
+* haga el join de forma segura,
+* reporte si hay registros sin correspondencia,
+* conserve solo columnas útiles para análisis,
+* guarde el resultado como data/silver/enriched/sales_enriched.parquet.
+Incluye comentarios y una breve explicación del criterio usado para el join.
+________________
+
+
+Prompt 7. Diseño de la capa Gold
+Objetivo: definir salidas finales.
+Prompt:
+A partir de un dataset integrado de ventas y clientes, ayúdame a proponer la capa Gold para responder estas preguntas de negocio:
+* ¿Qué categorías generan más ingresos?
+* ¿Qué ciudades venden más?
+* ¿Qué clientes compran con mayor frecuencia?
+* ¿Cómo evolucionan las ventas por mes?
+Propón:
+1. qué datasets o vistas resumen deberían construirse,
+2. qué columnas tendría cada salida,
+3. qué métricas deberían calcularse,
+4. qué nivel de agregación conviene usar,
+5. qué archivos deberían quedar en data/gold/.
+Organiza la respuesta como una propuesta de diseño final de la capa Gold.
+________________
+
+
+Prompt 8. Diseño de Star Schema opcional
+Objetivo: orientar a quienes quieran el extra.
+Prompt:
+Quiero transformar mi solución analítica en un Star Schema como parte de la capa Gold.
+Mi caso de negocio es análisis de ventas minoristas.
+Ayúdame a proponer:
+* una tabla de hechos,
+* dimensiones necesarias,
+* primary keys,
+* foreign keys,
+* métricas del hecho,
+* nivel de granularidad,
+* relación del modelo con las preguntas del negocio.
+Si es posible, organiza la respuesta siguiendo una lógica cercana a la metodología Hefesto, explicando por qué cada dimensión y cada métrica son relevantes.
+________________
+
+
+Prompt 9. Validación final de consistencia
+Objetivo: revisar si el proyecto quedó coherente.
+Prompt:
+Revisa esta propuesta de arquitectura de datos con capas Raw, Silver y Gold.
+Quiero que evalúes si existe coherencia entre:
+* las preguntas del negocio,
+* las fuentes utilizadas,
+* el modelo conceptual,
+* el modelo lógico,
+* las transformaciones definidas,
+* y la capa Gold final.
+Indícame:
+1. qué está bien alineado,
+2. qué vacíos o inconsistencias detectas,
+3. qué mejoras harías,
+4. qué riesgos técnicos o analíticos podrían existir.
+Devuélveme la respuesta como una revisión técnica breve pero concreta.
+________________
+
+
+14. Ejemplo de estructura final del proyecto
+integrative_project/
+│
+├── README.md
+├── docs/
+│   ├── project_description.pdf
+│   ├── conceptual_diagram.png
+│   ├── logical_diagram.png
+│   └── prompting_evidence.pdf
+│
+├── data/
+│   ├── raw/
+│   │   ├── sales.csv
+│   │   ├── customers.json
+│   │   └── products.csv
+│   ├── silver/
+│   │   ├── sales_cleaned.parquet
+│   │   ├── customers_cleaned.parquet
+│   │   ├── products_cleaned.parquet
+│   │   └── sales_enriched.parquet
+│   └── gold/
+│       ├── sales_by_category.parquet
+│       ├── monthly_sales.csv
+│       └── frequent_customers.csv
+│
+├── scripts/
+│   ├── 01_ingestion.py
+│   ├── 02_cleaning.py
+│   ├── 03_integration.py
+│   ├── 04_gold_layer.py
+│   └── 05_export.py
+│
+├── notebooks/ (optional)
+│
+└── dashboards/
+        ├── sales_dashboard_01.png
+        └── sales_dashboard_02.png

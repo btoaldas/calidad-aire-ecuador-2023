@@ -1,0 +1,107 @@
+﻿Airflow
+¿Qué es Airflow?
+
+
+Apache Airflow es una herramienta para automatizar, programar y orquestar flujos de trabajo.
+
+
+Palabras clave:
+* Automatización
+
+* Programación (scheduling)
+
+* Orquestación (orden correcto de tareas)
+¿Qué es un DAG?
+
+
+Directed Acyclic Graph
+Grafo Dirigido Acíclico
+🔹 Directed (Dirigido)
+Las tareas tienen un orden.
+Ejemplo:
+Extraer → Transformar → Cargar
+No se puede transformar antes de extraer.
+🔹 Acyclic (Sin ciclos)
+No puede haber bucles infinitos.
+Esto ❌ NO es válido:
+A → B → C → A
+Esto ✅ sí es válido:
+A → B → C
+
+
+
+
+🔹 Graph (Grafo)
+Es simplemente un conjunto de tareas conectadas entre sí.
+Definición simple 
+
+
+Un DAG en Airflow es un flujo de tareas con un orden definido que se ejecuta automáticamente y sin ciclos.
+
+
+Un DAG es el “mapa” que le dice a Airflow qué tareas ejecutar y en qué orden.
+
+
+Conectarlo con el ETL
+Un ETL es naturalmente un DAG.
+Ejemplo:
+[Extraer datos]
+       ↓
+[Transformar datos]
+       ↓
+[Cargar a base de datos]
+Ese flujo ES un DAG.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Visualmente 
+
+
+       ETL DAG
+
+
+  [Extract]
+       ↓
+  [Transform]
+       ↓
+    [Load]
+Con mayor complejidad:
+         [Extract API]
+              ↓
+         [Clean Data]
+          ↙         ↘
+[Generate Report]   [Load DB]
+Así ven que un DAG puede ramificarse.
+
+
+	
+
+Conceptos clave que deben llevarse
+   * Un DAG define un flujo de trabajo
+
+   * Está compuesto por tareas (tasks)
+
+   * Las tareas tienen dependencias
+
+   * No puede tener ciclos
+
+   * Se ejecuta automáticamente según una programación

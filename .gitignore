@@ -4,3 +4,7 @@ __pycache__/
 puppeteer-config.json
 data/raw/poblacion_inec.zip
 node_modules/
+docs/recursos_curso/cedia_cookies.txt
+docs/recursos_curso/curso_page.html
+docs/recursos_curso/tarea_page.html
+docs/recursos_curso/repo/

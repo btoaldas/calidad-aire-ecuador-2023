@@ -1,0 +1,27 @@
+﻿Ejercicio: Modelado de Datos para una Librería Virtual
+Enunciado
+Una Librería Virtual requiere un sistema de gestión para manejar su catálogo de libros, las órdenes de compra de los clientes y la información de los autores.
+
+
+Detalles del Negocio:
+
+
+1. Libros: Cada libro debe estar identificado por un ISBN único. Se necesita registrar el título, la fecha de publicación, el número de páginas, el precio y el stock disponible. Un libro debe tener al menos un autor y puede tener varios.
+2. Autores: De cada autor se registra un identificador único (ID de Autor), nombre completo, nacionalidad y una breve biografía.
+3. Clientes: Los clientes se identifican con un ID único. Se almacena su nombre, apellido, dirección de correo electrónico y una dirección de envío principal.
+4. Órdenes de Compra: Cuando un cliente realiza una compra, se genera una Orden de Compra. Cada orden tiene un ID de Orden único, la fecha de la compra y el estado actual (ej. "Pendiente", "Enviado", "Entregado"). Una orden debe estar asociada a un único cliente.
+5. Detalle de la Orden: Una orden de compra siempre incluye uno o más libros, y para cada libro se debe registrar la cantidad comprada y el precio unitario en el momento de la compra (para mantener la integridad histórica del precio).
+Tarea de Modelado
+Basándose en este enunciado:
+
+
+1. Modelo Conceptual: Identifique las entidades, sus atributos clave y las relaciones entre ellas.
+2. Modelo Lógico: Transforme el Modelo Conceptual en un Modelo Lógico Relacional, incluyendo todas las tablas, columnas, claves primarias (PK), claves foráneas (FK) y la cardinalidad de las relaciones. 
+3. Modelo Físico: Elabore una propuesta de script SQL (DDL) para crear las tablas en un sistema gestor de bases de datos de su elección (ej. MySQL o PostgreSQL), asegurando la correcta implementación de las restricciones de clave.
+
+
+________________
+
+
+Declaración de Valor Agregado para el Estudiante
+Al enfrentar este ejercicio de modelado de datos en tres etapas (conceptual, lógico y físico), ustedes están desarrollando la habilidad fundamental para traducir requisitos de negocio ambiguos en una estructura de datos robusta y eficiente. Dominar esta transición es crucial para cualquier Arquitecto de Datos o Ingeniero, ya que les permite diseñar bases de datos que no solo almacenan información, sino que también soportan la lógica operativa y la escalabilidad de la aplicación.

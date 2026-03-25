@@ -234,14 +234,19 @@ python3 scripts/run_all_pipeline.py
 ## 9. Estructura del Proyecto
 
 ```
-proyecto/
+calidad-aire-ecuador-2023/
 ├── README.md                          <- Este archivo
-├── start.sh                           <- Script de inicio
-├── stop.sh                            <- Script de parada
+├── start.sh / stop.sh                 <- Scripts de inicio y parada
 ├── docker-compose.yml                 <- Orquestacion Docker
 │
 ├── docs/
-│   └── diagramas_mermaid.md           <- Modelos conceptual, logico y ETL
+│   ├── diagramas_mermaid.md           <- Codigo Mermaid de todos los diagramas
+│   ├── modelo_conceptual.png          <- Imagen modelo conceptual
+│   ├── modelo_logico.png              <- Imagen modelo logico
+│   ├── star_schema_hefesto.png        <- Imagen Star Schema HEFESTO
+│   ├── GUIA_DOCKER_DASHBOARD.md       <- Guia de uso Docker y Dashboard
+│   ├── CHECKLIST_CUMPLIMIENTO.md      <- Checklist de requisitos del proyecto
+│   └── recursos_curso/               <- Materiales de referencia del curso
 │
 ├── data/
 │   ├── raw/                           <- Datos crudos originales
@@ -249,24 +254,24 @@ proyecto/
 │   ├── silver/
 │   │   ├── standardized/              <- Datos limpios
 │   │   └── integrated/                <- Datos integrados
-│   └── gold/                          <- Vistas analiticas finales
+│   └── gold/                          <- Vistas analiticas finales (CSV + Parquet)
 │
 ├── scripts/
 │   ├── utils.py                       <- Utilidades compartidas
-│   ├── 00_generate_raw_data.py        <- Generacion de datos
+│   ├── 00_generate_raw_data.py        <- Generacion de datos sinteticos
 │   ├── 01_bronze_mediciones.py        <- Bronze: mediciones aire
 │   ├── 02_bronze_meteorologia.py      <- Bronze: meteorologia
 │   ├── 03_bronze_poblacion.py         <- Bronze: poblacion
-│   ├── 04_silver_standardized.py      <- Silver: limpieza
-│   ├── 05_silver_integrated.py        <- Silver: integracion
-│   ├── 06_gold_layer.py               <- Gold: vistas analiticas
-│   ├── 07_export_postgresql.py        <- Export: SQL para PostgreSQL
+│   ├── 04_silver_standardized.py      <- Silver: limpieza y validacion
+│   ├── 05_silver_integrated.py        <- Silver: integracion de fuentes
+│   ├── 06_gold_layer.py               <- Gold: vistas analiticas finales
+│   ├── 07_export_postgresql.py        <- Export: DDL + datos SQL
 │   └── run_all_pipeline.py            <- Orquestador del pipeline
 │
 ├── docker/
 │   ├── Dockerfile                     <- Imagen del pipeline
-│   ├── init.sql                       <- DDL Star Schema
-│   └── load_data.sql                  <- Datos de carga
+│   ├── init.sql                       <- DDL Star Schema HEFESTO
+│   └── load_data.sql                  <- 6,973 sentencias INSERT
 │
 └── dashboards/
     └── index.html                     <- Dashboard interactivo

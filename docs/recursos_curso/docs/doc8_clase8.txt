@@ -1,0 +1,915 @@
+﻿Descripción de la problemática y requerimiento institucional
+Desde la gestión pública y la planificación territorial, uno de los desafíos más importantes es comprender el problema de la siniestralidad vial más allá de los números absolutos. Con frecuencia, las decisiones se toman observando únicamente cuántos siniestros, fallecidos o lesionados registra una provincia. Sin embargo, ese enfoque puede ser engañoso, porque no distingue entre territorios grandes y pequeños, ni considera el tamaño del parque vehicular o la población expuesta.
+Una provincia con muchos siniestros no necesariamente enfrenta el problema más grave en términos relativos; puede simplemente ser una provincia con más habitantes, más circulación vehicular o mayor tamaño operativo. Del mismo modo, una provincia con menos siniestros en términos absolutos podría presentar una situación más crítica cuando se analiza el fenómeno de manera proporcional.
+Por esta razón, se requiere construir un producto de datos que permita comparar de forma justa y comprensible la situación vial de las provincias del Ecuador, integrando distintas fuentes oficiales en una sola vista analítica. El propósito no es únicamente describir cuántos eventos ocurrieron, sino generar evidencia que permita priorizar territorios, focalizar intervenciones y mejorar la toma de decisiones.
+Para ello, se solicita desarrollar una solución de datos basada en fuentes oficiales del INEC que integre:
+* los registros de vehículos matriculados, como aproximación al tamaño del parque vehicular;
+
+* los registros de siniestros de tránsito, como expresión del problema vial observado;
+
+* las proyecciones de población, como contexto demográfico del territorio;
+
+* y la dimensión geográfica oficial de provincias, como base de homologación y cruce territorial.
+
+El resultado esperado es una estructura analítica en la que cada fila represente una provincia y reúna, en una sola vista, información sobre parque vehicular, siniestralidad, víctimas, población e indicadores derivados. Esta integración debe permitir construir métricas comparables entre territorios, tales como:
+   * vehículos por cada 1.000 habitantes;
+
+   * siniestros por cada 10.000 vehículos;
+
+   * fallecidos por cada 100.000 habitantes;
+
+   * ranking relativo de riesgo vial por provincia;
+
+   * causa principal de siniestralidad por territorio;
+
+   * e identificación de provincias atípicas, por ejemplo aquellas con baja motorización pero alta severidad.
+¿Qué provincias requieren mayor atención prioritaria?
+¿Dónde el riesgo vial es proporcionalmente más alto?
+¿Qué territorios combinan alta severidad y condiciones estructurales desfavorables?
+¿Qué causas concentran la mayor parte de los siniestros por provincia?
+
+
+PRÁCTICA GUIADA PASO A PASO
+Producto de datos de riesgo vial territorial con datos oficiales del INEC
+________________
+
+
+1. Qué vas a construir
+Objetivo general
+Vas a construir un producto de datos territorial que permita responder esta pregunta:
+¿Qué provincias del Ecuador presentan un riesgo vial relativamente más alto cuando consideramos cuántos vehículos tienen, cuántos siniestros registran y cuánta población vive allí?
+Traducción simple
+No estamos solo “abriendo archivos”.
+Estamos construyendo una tabla final para comparar provincias de forma justa.
+Qué quiere el tomador de decisiones
+Piensa en un director de planificación, movilidad o analítica.
+Ese perfil quiere responder cosas como:
+      * ¿Qué provincias deberían priorizarse?
+      * ¿Dónde el problema vial parece más intenso?
+      * ¿Dónde hay más severidad?
+      * ¿Dónde los totales engañan y las tasas cambian la historia?
+________________
+
+
+2. Qué vas a aprender
+Al terminar esta práctica deberías poder explicar:
+      * qué representa cada dataset;
+      * qué significa una fila en cada capa;
+      * cómo se cruzan los datos;
+      * qué es un conteo absoluto;
+      * por qué la población importa;
+      * cómo se construyen tasas e indicadores;
+      * qué sí se puede concluir y qué no.
+________________
+
+
+3. Fuentes oficiales que vas a usar
+3.1 Vehículos Matriculados
+Descarga oficial:
+      * https://www.ecuadorencifras.gob.ec/vehiculos-matriculados/
+3.2 Siniestros de Tránsito
+Descarga oficial:
+      * https://www.ecuadorencifras.gob.ec/estadisticas-siniestros-de-transito/
+3.3 Estimaciones y Proyecciones de Población, revisión 2024
+Descarga oficial:
+      * https://www.ecuadorencifras.gob.ec/documentos/web-inec/Poblacion_y_Demografia/Proyecciones_Poblacionales/censo_2022/revision_2024/1_TABULADOS_excel.zip
+3.4 Clasificador Geográfico Estadístico
+Descarga oficial:
+      * https://www.ecuadorencifras.gob.ec/documentos/web-inec/Cartografia/Clasificador_Geografico/CLASIFICADOR_GEOGRAFICO_2024.zip
+3.5 Portales de apoyo
+      * https://www.ecuadorencifras.gob.ec/estadistica-de-transporte-bases-de-datos/
+      * https://aplicaciones3.ecuadorencifras.gob.ec/BIINEC-war/index.xhtml
+________________
+
+
+4. Qué significa cada fuente
+4.1 Vehículos Matriculados
+Qué mide: registros de matrícula vehicular.
+Qué aporta: una medida del tamaño del sistema vehicular por territorio.
+Traducción simple:
+te ayuda a entender cuán grande es el parque registrado en cada provincia.
+________________
+
+
+4.2 Siniestros de Tránsito
+Qué mide: eventos de siniestro, víctimas, lesionados, fallecidos y causas.
+Qué aporta: el problema vial observado.
+Traducción simple:
+si vehículos mide el tamaño del sistema, siniestros mide el problema que ocurre en ese sistema.
+________________
+
+
+4.3 Población
+Qué mide: habitantes estimados por provincia.
+Qué aporta: el contexto humano del territorio.
+Traducción simple:
+sirve para no confundir una provincia grande con una provincia más problemática.
+________________
+
+
+4.4 DPA / Clasificador Geográfico
+Qué mide: no mide un fenómeno, es un catálogo territorial.
+Qué aporta: la llave oficial para unir provincias correctamente.
+Traducción simple:
+sirve para que todas las tablas hablen del mismo territorio.
+Traducción simple:
+si una tabla dice 1, otra 01 y otra AZUAY, esta dimensión ayuda a que todas hablen del mismo territorio.
+________________
+
+
+5. Estructura del proyecto
+Usa esta estructura:
+proyecto_riesgo_vial/
+ raw/
+   inec_transporte/
+   inec_poblacion/
+   inec_geografia/
+ bronze/
+ silver/
+   standardized/
+   integrated/
+ gold/
+ scripts/
+ README.md
+________________
+
+
+6. Qué significan las capas
+Raw
+Archivos originales descargados.
+Traducción simple:
+son los datos tal como llegaron.
+Bronze
+Datos extraídos casi sin transformar.
+Traducción simple:
+ya salieron del ZIP o Excel, pero todavía están muy cerca de la fuente.
+Silver standardized
+Datos limpios y homologados.
+Traducción simple:
+aquí haces que las tablas hablen el mismo idioma.
+Silver integrated
+Datos resumidos y unidos a un nivel común.
+Traducción simple:
+aquí ya piensas en provincias, no en eventos o matrículas individuales.
+Gold
+Tablas listas para análisis y decisión.
+Traducción simple:
+esta capa ya responde preguntas de negocio.
+________________
+
+
+7. Paso 1: crear la estructura del proyecto
+Qué estás haciendo
+Preparar el proyecto y dejar claro el objetivo.
+Prompt para Cursor/Antigravity/VSC
+Quiero crear un proyecto de ingeniería de datos con arquitectura medallion para analizar riesgo vial territorial en Ecuador usando datos del INEC.
+
+
+Crea la estructura de carpetas:
+
+
+raw/
+bronze/
+silver/standardized/
+silver/integrated/
+gold/
+scripts/
+
+
+Además crea un README inicial que explique:
+- objetivo del proyecto
+- datasets a usar
+- qué representa cada capa
+- advertencia metodológica sobre cruce temporal si usamos siniestros 2021 y parque/población 2023
+
+
+No inventes datasets. Usa estos nombres:
+- vehiculos matriculados 2023
+- siniestros de tránsito 2021
+- proyecciones de población 2021/2023
+- dimensión provincia DPA
+Qué deberías obtener
+      * carpetas creadas;
+      * README con el objetivo del proyecto;
+      * nota sobre el cruce temporal.
+________________
+
+
+8. Paso 2: documentar las fuentes
+Qué estás haciendo
+Dejar documentado qué es cada fuente y para qué sirve.
+Prompt para Cursor
+Quiero un archivo FUENTES.md dentro de la carpeta raw con una tabla que documente estas fuentes:
+
+
+1. Vehículos Matriculados 2023
+2. Siniestros de Tránsito 2021
+3. Proyecciones de Población revisión 2024
+4. Clasificador Geográfico Estadístico
+
+
+Para cada una documenta:
+- nombre
+- institución
+- enlace de descarga o página oficial
+- formato
+- granularidad
+- uso en el proyecto
+- clave de unión principal
+- observaciones metodológicas
+
+
+Incluye también una sección que explique en lenguaje simple:
+- qué mide cada fuente
+- qué aporta al problema de negocio
+Qué deberías entender
+Que cada fuente cuenta una parte distinta de la historia:
+      * vehículos = tamaño del sistema;
+      * siniestros = problema observado;
+      * población = contexto;
+      * DPA = llave territorial.
+________________
+
+
+Prompt utilizado: 
+
+
+Quiero un archivo FUENTES.md con una tabla que documente estas fuentes:
+
+
+1. Vehículos Matriculados 2023
+2. Siniestros de Tránsito 2021
+3. Proyecciones de Población revisión 2024
+4. Clasificador Geográfico Estadístico
+estos archivos esta en:
+
+
+raw 
+
+
+Para cada una documenta:
+- desripción de lo que representa cada fuente 
+- nombre
+- institución
+- enlace de descarga o página oficial
+- formato
+- granularidad
+
+
+Incluye también una sección que explique en lenguaje simple:
+- qué mide cada fuente
+- qué aporta al problema de negocio
+Qué deberías entender
+Que cada fuente cuenta una parte distinta de la historia:
+vehículos = tamaño del sistema;
+siniestros = problema observado;
+población = contexto;
+DPA = llave territorial.
+
+
+enlaces de descarga:
+3. Fuentes oficiales que vas a usar
+3.1 Vehículos Matriculados
+Descarga oficial:
+https://www.ecuadorencifras.gob.ec/vehiculos-matriculados/
+3.2 Siniestros de Tránsito
+Descarga oficial:
+https://www.ecuadorencifras.gob.ec/estadisticas-siniestros-de-transito/
+3.3 Estimaciones y Proyecciones de Población, revisión 2024
+Descarga oficial:
+https://www.ecuadorencifras.gob.ec/documentos/web-inec/Poblacion_y_Demografia/Proyecciones_Poblacionales/censo_2022/revision_2024/1_TABULADOS_excel.zip
+3.4 Clasificador Geográfico Estadístico
+Descarga oficial:
+https://www.ecuadorencifras.gob.ec/documentos/web-inec/Cartografia/Clasificador_Geografico/CLASIFICADOR_GEOGRAFICO_2024.zip
+	
+
+9. Paso 3: construir la capa bronze
+Qué estás haciendo
+Extraer las fuentes a tablas cercanas al origen.
+Prompt para Cursor
+Quiero que construyas el script build_bronze.py.
+
+
+Objetivo:
+- leer los archivos de raw
+- extraer las fuentes a CSV en bronze
+- conservar el mayor parecido posible con la fuente
+- agregar columnas de linaje:
+ - _fuente_archivo
+ - _cargado_en_utc
+
+
+Genera estas tablas:
+- bronze/brz_vehiculos_matriculados_2023.csv
+- bronze/brz_siniestros_transito_2021.csv
+- bronze/brz_dim_provincia_dpa_2024.csv
+- bronze/brz_poblacion_tabulado_provincial_manifest.csv
+
+
+Requisitos:
+- no inventes datos
+- no transformes demasiado en bronze
+- documenta en comentarios por qué población entra como manifest y no como tabla final numérica
+- imprime un resumen final con filas, columnas y muestra de 5 filas por tabla
+Prompt en clase
+
+
+tengo estos datos que en raw, quiero tener la capa bronze, quisiera tenerlos en formato parquet y csv, guarda los resultados dentro de la carpeta bronze, usa este formato brz_siniestros_transito_2021.csv
+El script ponlo en la carpeta scripts
+	
+
+Qué deberías obtener
+Estas tablas:
+      * brz_vehiculos_matriculados_2023
+      * brz_siniestros_transito_2021
+      * brz_dim_provincia_dpa_2024
+      * brz_poblacion_tabulado_provincial_manifest
+Qué significa cada una
+brz_vehiculos_matriculados_2023
+      * 3,065,967 filas
+      * 14 columnas
+      * cada fila: un registro de matrícula 2023
+Ejemplos reales:
+      * 1;101;YAMAHA;7;1;0,25;2;1111;3;1;1;5;...
+      * 9;911;YAMAHA;7;1;0,25;2;1111;3;1;1;12;...
+brz_siniestros_transito_2021
+      * 21,352 filas
+      * 14 columnas
+      * cada fila: un evento de siniestro
+Ejemplos reales:
+      * 2021;ENERO;VIERNES;00:00 A 00:59;TUNGURAHUA;AMBATO;RURAL;CHOQUES;EMBRIAGUEZ O DROGA;0;0;0;...
+      * 2021;ENERO;VIERNES;00:00 A 00:59;GUAYAS;GUAYAQUIL;URBANA;ATROPELLOS;EXCESO VELOCIDAD;0;2;2;...
+brz_dim_provincia_dpa_2024
+Ejemplos:
+      * 01;AZUAY
+      * 02;BOLÍVAR
+brz_poblacion_poblacion
+Prompt Usado en clase
+Queremos en bronze el parquet y csv de población por provincia con una fila por provincia y exactamente estos campos: nombre oficial de la provincia, nombre de la hoja del Excel de donde salió el dato, población al 30 de junio de 2023, población al 30 de junio de 2021, y una marca de cuándo se procesó (fecha/hora en UTC).
+Fuente: el libro Excel
+
+Analiza y manten los estandares actuales, recuerda dejar el script listo para ejecutar dentro de scripts
+Tabulado_provincial_edad_simple_1990-2035_rev2024.xlsx
+
+
+	
+
+Traducción simple
+En bronze todavía no estás analizando.
+Solo estás preparando las piezas.
+________________
+
+
+10. Paso 4: entender qué representa una fila
+Qué estás haciendo
+Evitar el error de unir tablas que no tienen la misma granularidad.
+Prompt para Cursor
+Analiza las tablas bronze del proyecto y genera un archivo RESUMEN_BRONZE.md.
+
+
+Para cada tabla indica:
+1. nombre
+2. número de filas y columnas
+3. columnas
+4. qué representa una fila
+5. granularidad
+6. 5 filas reales de ejemplo
+7. posibles problemas de calidad
+8. cómo podría unirse después con otras tablas
+
+
+Luego agrega una sección de explicación simple:
+- qué significa cada tabla en lenguaje no técnico
+- por qué todavía no se pueden unir todas directamente
+Qué deberías entender
+No puedes unir directamente:
+      * una fila de matrícula
+      * con una fila de siniestro
+porque no representan la misma cosa.
+________________
+
+
+11. Paso 5: construir silver standardized
+Qué estás haciendo
+Estandarizar claves, nombres y fechas para que las tablas se puedan unir después.
+Prompt para Cursor
+Quiero que construyas el script build_silver_standardized.py.
+
+
+Prompt clase: 
+
+
+Quiero que me ayudes a estandarizar mi capa Silver en la carpeta `silver/standardized`, tomando como base estos datasets en CSV y también sus equivalentes en Parquet:
+- `silver/standardized/std_vehiculos_matriculados_registro_2023.parquet`
+- `silver/standardized/std_siniestros_evento_2021.parquet`
+- `silver/standardized/std_poblacion_provincias.parquet`
+- `silver/standardized/std_dim_provincia_dpa.parquet`
+Necesito una propuesta de estandarización integral a nivel de ingeniería de datos, buenas prácticas
+Objetivo general:
+Diseñar una versión estandarizada y consistente de estos datasets, de modo que compartan reglas comunes de calidad, nombres, formatos, tipos de datos y catálogos de referencia. La idea es que la capa Silver quede limpia, homogénea y lista para análisis, cruces y modelado posterior.
+Lineamientos conceptuales que quiero que apliques:
+1. Estandarización de nombres de columnas
+- Usar nombres consistentes, claros y en un mismo estilo.
+- Evitar mezclar mayúsculas, espacios, tildes y caracteres especiales en los nombres de campos.
+- Mantener una convención uniforme, por ejemplo `snake_case`.
+2. Estandarización de texto
+- Normalizar valores de texto para evitar variantes del mismo concepto.
+- Unificar uso de mayúsculas/minúsculas.
+- Corregir diferencias de acentos, espacios extra, caracteres especiales y formas distintas de escribir una misma provincia, cantón o categoría.
+- Asegurar que los catálogos territoriales coincidan entre tablas, especialmente provincias.
+3. Estandarización de fechas y tiempo
+- Toda fecha debe quedar en un formato único y explícito.
+- Si existen campos separados como año, mes, día o textos como “ENERO”, convertirlos a una representación normalizada.
+- Si no existe una fecha completa, generar al menos campos temporales consistentes y comparables.
+- Los timestamps como `fecha_procesamiento_utc` deben conservar una convención estándar, idealmente ISO 8601.
+- Explicar claramente cuándo un campo es fecha, período, año, mes o timestamp.
+4. Estandarización de números
+- Garantizar que variables numéricas queden con tipos correctos.
+- Evitar que números se lean como texto.
+- Estandarizar enteros, decimales y valores nulos.
+- Revisar medidas como población, pasajeros, tonelaje, fallecidos, lesionados y víctimas para que tengan tipos adecuados y reglas coherentes.
+5. Integridad territorial y uso de dimensiones
+- Usar la tabla de provincias DPA como dimensión de referencia para homologar códigos y nombres.
+- Resolver diferencias entre códigos numéricos y nombres textuales de provincia.
+- Preparar los datasets para que puedan relacionarse mediante claves limpias y consistentes.
+- Proponer una clave estandarizada de provincia que sirva para cruces entre población, siniestros y vehículos.
+6. Tratamiento de nulos, vacíos y valores atípicos
+- Definir criterios para distinguir entre dato faltante, dato desconocido y valor válido igual a cero.
+- Limpiar espacios vacíos, cadenas truncadas o registros incompletos.
+- Detectar inconsistencias básicas sin eliminar información útil innecesariamente.
+7. Homologación semántica
+- Unificar categorías que representen lo mismo pero estén escritas de forma distinta.
+- Estandarizar dominios como provincia, cantón, zona, clase, causa, combustible, servicio y mes.
+- Documentar las decisiones de homologación para que un estudiante entienda por qué se hicieron.
+8. Compatibilidad entre CSV y Parquet
+- Aplicar exactamente la misma lógica de transformación a ambas versiones.
+- Asegurar que el esquema final sea consistente sin importar el formato de entrada.
+- Verificar que el resultado final pueda escribirse nuevamente en CSV y Parquet.
+9. Trazabilidad y reproducibilidad
+- La solución debe ser clara, modular y reproducible.
+- Incluir comentarios y estructura comprensible para enseñanza.
+- Separar lógica de limpieza, homologación, validación y exportación.
+
+
+10. Validaciones finales
+- Validar que no existan duplicidades inesperadas en catálogos.
+- Validar que las provincias de los datasets coincidan con la dimensión DPA.
+- Validar tipos de datos finales.
+- Validar porcentaje de nulos y cambios principales introducidos por la estandarización.
+- Generar un pequeño resumen de calidad antes y después.
+
+
+	
+
+
+
+Qué deberías obtener
+std_vehiculos_matriculados_registro_2023
+      * misma lógica de la tabla bronze
+      * ya con codigo_provincia
+      * ya con fecha_referencia_registro
+Ejemplos reales:
+      * ...;01;2023;2023-05-01;...
+      * ...;09;2023;2023-12-01;...
+std_siniestros_evento_2021
+      * ya con codigo_provincia
+      * ya homologada con la dimensión
+Ejemplos reales:
+      * ...;TUNGURAHUA;18;TUNGURAHUA;1;2021-01-01;2021;...
+      * ...;LOS RIOS;12;LOS RÍOS;1;2021-01-01;2021;...
+std_poblacion_provincia_2021_2023
+Ejemplos reales:
+      * AZUAY → 828172 / 825773
+      * BOLÍVAR → 204819 / 206608
+      * CAÑAR → 237527 / 237790
+std_dim_provincia_dpa
+Ejemplo:
+      * 01;AZUAY;AZUAY;...
+Traducción simple
+Aquí haces que todas las tablas hablen un idioma común.
+________________
+12. Paso 7: construir silver integrated
+Qué estás haciendo
+Llevar todas las tablas a una misma unidad de análisis: provincia.
+Prompt para Cursor/CLASE
+Quiero que construyas el script build_silver_integrated.py.
+
+
+Crea estas tablas:
+- silver/integrated/int_parque_por_provincia_2023.parquet
+- silver/integrated/int_siniestralidad_por_provincia_2021.parquet
+- silver/integrated/int_poblacion_demografia_provincia.parquet
+- silver/integrated/int_cobertura_llave_provincia.parquet
+
+
+      * También en csv pero con el fin de visualizar los resultados
+Reglas:
+1. Parque por provincia
+- agrupa std_vehiculos_matriculados_registro_2023 por codigo_provincia
+- cuenta registros
+- conserva anio max o referencia 2023
+-utiliza convenciones adecuadas
+
+
+2. Siniestralidad por provincia
+- agrupa std_siniestros_evento_2021 por codigo_provincia
+- calcula:
+ - total_siniestros
+ - total_fallecidos
+ - total_lesionados
+ - total_victimas
+ - anio
+-utiliza convenciones adecuadas
+
+
+3. Población
+- reutiliza la standardized provincial
+-utiliza convenciones adecuadas
+
+
+4. Cobertura
+- usa la dimensión como base de 24 provincias
+- Une con parque, siniestralidad y población
+- agrega flags:
+ - tiene_parque
+ - tiene_siniestros
+ - tiene_poblacion
+
+
+Al final:
+- imprime ejemplos reales
+- explica en comentarios qué representa cada tabla
+Qué deberías obtener
+int_parque_por_provincia_2023
+Ejemplos reales:
+      * 01;131284;2023
+      * 09;715079;2023
+int_siniestralidad_por_provincia_2021
+Ejemplos reales:
+      * 01;828;96;625;721;2021
+      * 09;7758;516;7771;8287;2021
+int_cobertura_llave_provincia
+Tabla puente por provincia, con:
+      * parque
+      * siniestralidad
+      * población
+      * flags de cobertura
+Traducción simple
+Aquí dejas de pensar en eventos y matrículas individuales.
+Ahora cada fila representa una provincia.
+________________
+
+
+13. Paso 8: entender la unidad de análisis
+Prompt para Cursor
+Genera un documento llamado UNIDAD_DE_ANALISIS.md.
+
+
+Explica con ejemplos reales:
+- qué representa una fila en bronze
+- qué representa una fila en silver standardized
+- qué representa una fila en silver integrated
+- qué representa una fila en gold
+
+
+Incluye una sección en lenguaje simple para estudiantes que nunca han trabajado con granularidad.
+Usa ejemplos del proyecto:
+- una fila de matrícula
+- una fila de siniestro
+- una fila de provincia agregada
+Traducción simple
+La fila final ya no es un evento ni una matrícula.
+Es una provincia resumida.
+________________
+
+
+15. Paso 9: construir gold
+Qué estás haciendo
+Crear tablas listas para análisis y decisión.
+Prompt para Cursor
+Quiero que construyas el script build_gold.py.
+
+
+Genera estas tablas:
+- gold/gld_fact_riesgo_vial_provincia.parquet
+- gold/gld_ranking_provincias_riesgo_relativo.parquet
+- gold/gld_causa_principal_por_provincia.parquet
+- gold/gld_outliers_baja_motorizacion_alta_severidad.parquet
+
+
+También en csv solo para visualización
+
+
+Reglas:
+1. Fact principal
+Partiendo de int_cobertura_llave_provincia, calcula:
+- vehiculos_por_1000_hab_2023
+- siniestros_por_10k_vehiculos_mixto
+- fallecidos_por_100k_hab
+- score o indice_riesgo_relativo
+- ranking_riesgo_relativo
+
+
+Incluye una columna de advertencia textual que deje claro que hay cruce temporal entre 2021 y 2023 si aplica.
+
+
+2. Ranking
+- ordena por ranking_riesgo_relativo
+
+
+3. Causa principal
+- parte de std_siniestros_evento_2021
+- cuenta eventos por provincia y causa
+- rankea por provincia
+- conserva top 1
+
+
+4. Outliers
+- identifica provincias con baja motorización y alta severidad usando percentiles o cuantiles
+- documenta el criterio usado
+
+
+Al final:
+- imprime ejemplos reales
+- genera un resumen interpretativo para negocio
+Qué deberías obtener
+gld_fact_riesgo_vial_provincia
+Ejemplo real en Azuay:
+      * vehiculos_por_1000_hab_2023 = 158.52...
+      * siniestros_por_10k_vehiculos_mixto = 63.06...
+      * ranking_riesgo_relativo = 9
+gld_ranking_provincias_riesgo_relativo
+En tu corrida:
+      * Morona Santiago quedó en posición 1
+gld_causa_principal_por_provincia
+Ejemplos:
+      * AZUAY → IMPERICIA E IMPRUDENCIA DEL CONDUCTOR
+      * CARCHI → EXCESO VELOCIDAD
+gld_outliers_baja_motorizacion_alta_severidad
+En tu corrida apareció:
+      * Morona Santiago
+Traducción simple
+Gold ya es una capa pensada para responder preguntas de negocio.
+________________
+
+
+16. Paso 10: entender conteos absolutos
+Qué estás haciendo
+Aprender por qué un total crudo puede engañar.
+Explicación
+Un conteo absoluto es un total sin contexto.
+Ejemplos reales:
+      * Azuay → 131284 registros de parque
+      * Azuay → 828 siniestros
+      * Azuay → 96 fallecidos
+Eso está bien, pero no basta para comparar con justicia.
+Por qué no basta
+Una provincia más grande puede tener más de todo solo por tamaño.
+Traducción simple
+Un total te dice cuánto hay.
+No siempre te dice qué tan grave es comparativamente.
+Prompt para Cursor
+Genera un documento llamado CONTEOS_VS_TASAS.md.
+
+
+Explica usando datos reales del proyecto:
+- qué es un conteo absoluto
+- ejemplos reales de conteos absolutos
+- por qué un conteo absoluto no basta para comparar provincias
+- qué es una tasa o indicador relativo
+- qué aporta la población
+- qué aporta el parque vehicular
+- cómo cambian las conclusiones cuando usamos tasas
+
+
+Incluye ejemplos reales con al menos:
+- Azuay
+- Guayas
+- la provincia que quedó primera en el ranking
+________________
+
+
+17. Paso 11: entender por qué usamos población
+Qué estás haciendo
+Comprender por qué la población entra al modelo.
+Explicación
+La población sirve como denominador.
+Eso significa que te ayuda a responder:
+      * ¿Qué tan grave es el problema respecto a la gente que vive ahí?
+Ejemplo simple
+100 fallecidos:
+      * en una provincia pequeña,
+      * y en una provincia enorme,
+no significan lo mismo.
+Qué aporta la población
+Te permite construir indicadores como:
+      * fallecidos por 100,000 habitantes;
+      * vehículos por 1,000 habitantes.
+Traducción simple
+La población ayuda a que la comparación sea más justa.
+________________
+
+
+18. Paso 12: explicar el caso de Azuay
+Qué estás haciendo
+Recorrer una provincia real a través de todo el pipeline.
+Prompt para Cursor
+Genera un documento llamado CASO_AZUAY.md.
+
+
+Quiero que expliques el flujo completo de Azuay a través de todas las capas:
+
+
+1. cómo aparece en la dimensión provincia
+2. cómo aparece en parque agregado
+3. cómo aparece en siniestralidad agregada
+4. cómo aparece en población
+5. cómo aparece en la fact gold
+6. qué significan sus indicadores
+
+
+Incluye los valores reales del proyecto y una traducción simple, por ejemplo:
+- qué quiere decir vehiculos_por_1000_hab_2023
+- qué quiere decir siniestros_por_10k_vehiculos_mixto
+- qué significa que su ranking sea 9
+Qué deberías ver
+Para Azuay:
+      * dimensión: 01
+      * parque: 131284
+      * siniestros: 828
+      * fallecidos: 96
+      * lesionados: 625
+      * ranking: 9
+Traducción simple
+Azuay no es la provincia peor posicionada, pero tampoco está entre las menos preocupantes según el índice construido.
+________________
+
+
+19. Paso 13: entender el ranking
+Qué estás haciendo
+Interpretar una tabla de negocio.
+Explicación
+gld_ranking_provincias_riesgo_relativo sirve para responder:
+      * qué provincias aparecen más arriba;
+      * cuáles merecen atención prioritaria;
+      * cuáles combinan mayor intensidad relativa.
+En tu corrida:
+      * Morona Santiago quedó en la posición 1.
+Traducción simple
+Eso no significa necesariamente que tenga el mayor total absoluto de siniestros.
+Significa que, con el índice construido, resalta como territorio prioritario.
+________________
+
+
+20. Paso 14: entender outliers
+Qué estás haciendo
+Identificar casos que rompen la intuición.
+Explicación
+En tu tabla gld_outliers_baja_motorizacion_alta_severidad apareció:
+      * Morona Santiago
+Eso significa:
+      * no destaca por muchísima motorización,
+      * pero sí por severidad relativa.
+Traducción simple
+No siempre el problema más preocupante está donde hay más carros.
+________________
+
+
+21. Paso 15: advertencia metodológica obligatoria
+Qué estás haciendo
+Entender una limitación real del proyecto.
+Explicación
+Tu proyecto mezcla años:
+      * siniestros: 2021
+      * parque: 2023
+      * población: 2021 y 2023
+Por eso el indicador siniestros_por_10k_vehiculos_mixto es mixto.
+Qué debes decir correctamente
+No digas:
+“esto describe exactamente el riesgo vial de 2023”
+Di:
+“este es un ejercicio de integración territorial con siniestros 2021 y parque/población 2023”
+Traducción simple
+El proyecto es útil para aprender integración y análisis, pero hay que ser honestos con la limitación temporal.
+________________
+
+
+22. Paso 16: generar el documento pedagógico final
+Qué estás haciendo
+Construir el material final para estudiantes.
+Prompt para Cursor
+Usando todas las tablas y documentos ya generados, crea un documento final llamado PRACTICA_GUIADA_ESTUDIANTES.md.
+
+
+Debe incluir:
+
+
+1. Introducción al problema de negocio
+2. Qué quiere el tomador de decisiones
+3. Explicación de cada fuente con datos reales
+4. Explicación de cada capa del proyecto
+5. Qué representa una fila en cada tabla
+6. Explicación de cómo se cruzan los datos
+7. Explicación de conteos absolutos vs tasas
+8. Explicación del rol de la población
+9. Ejemplo completo con Azuay
+10. Interpretación del ranking y outliers
+11. Advertencia metodológica del cruce temporal
+12. Qué se puede y qué no se puede concluir
+
+
+Requisitos:
+- no asumir conocimiento previo
+- lenguaje claro
+- ejemplos reales
+- explicar cada concepto con traducción simple
+- no inventar cifras
+________________
+
+
+23. Qué debería poder decir un estudiante al final
+Al terminar, un estudiante debería poder decir:
+“Construí un producto de datos territorial sobre riesgo vial integrando registros de matrícula, siniestros, población y una dimensión geográfica oficial. Primero limpié y estandaricé las fuentes, luego las agregué al nivel provincia, después las crucé usando el código oficial de provincia y finalmente calculé indicadores relativos para comparar territorios de forma más justa que con simples conteos absolutos.”
+________________
+
+
+24. Checklist final
+Antes de cerrar la práctica, verifica:
+      * todas las provincias tienen codigo_provincia;
+      * no hay joins rotos por nombres;
+      * las tablas integradas tienen 24 provincias;
+      * gold tiene una fila por provincia;
+      * el documento final explica el cruce temporal;
+      * los ejemplos reales coinciden con los CSV;
+      * el estudiante entiende por qué se usa población;
+      * el estudiante entiende por qué no bastan los conteos absolutos.
+________________
+
+
+25. Mejora futura recomendada
+Como siguiente mejora metodológica, podrías alinear todo temporalmente.
+Objetivo de la mejora
+Tener:
+      * siniestros y parque del mismo año;
+      * población del mismo año;
+      * indicadores ya no mixtos.
+Prompt opcional para Cursor
+Quiero una propuesta de mejora metodológica para alinear temporalmente el proyecto.
+
+
+Analiza:
+- si existe disponibilidad compatible de siniestros y vehículos para el mismo año
+- qué scripts habría que cambiar
+- qué indicadores dejarían de ser mixtos
+- qué impacto tendría en la interpretación del ranking
+
+
+No implementes todavía; solo diseña la mejora.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Generar dashboards:
+
+
+Actúa como un analista de datos senior especializado en inteligencia de negocios. A partir de la información contenida en mi capa Gold, diseña un dashboard gerencial claro, visual y orientado a la toma de decisiones.
+
+
+El dashboard debe incluir:
+
+
+Indicadores clave de desempeño (KPIs) relevantes.
+Gráficas apropiadas (por ejemplo: tendencias, comparaciones, distribución, participación, etc.).
+Una estructura organizada (resumen ejecutivo, análisis por áreas, detalles).
+
+
+Además, para cada gráfica o visualización, proporciona:
+
+
+Una breve explicación de lo que representa.
+Insights clave que se pueden interpretar.
+Posibles decisiones o acciones recomendadas basadas en esos datos.
+
+
+Asegúrate de que el diseño sea claro, profesional y enfocado a un público gerencial (no técnico).
+
+
+Crealo dentro de la carpeta dashboard
+El dashboard tiene que ser interactivo en html con chart js
+Genera dentro de la carpeta dashboard

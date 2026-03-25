@@ -1,0 +1,233 @@
+﻿FUNDAMENTOS DE ARQUITECTURA DE DATOS PARA IA GENERATIVA
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+🏗️ Sesión 1: Introducción a la Arquitectura de Datos
+1. ¿Qué es la Arquitectura de Datos?
+Imagina que quieres construir una ciudad. No puedes empezar a colocar ladrillos sin un plano que indique dónde van las tuberías, el cableado eléctrico y las calles.
+La Arquitectura de Datos es ese plano. Diseña cómo una organización recolecta, transforma, almacena y distribuye sus datos. Su objetivo es garantizar que la persona correcta tenga el dato correcto en el momento correcto.
+Definición técnica (DAMA)
+Según DAMA (Data Management Association), la Arquitectura de Datos es el conjunto de reglas, políticas y estándares que definen:
+* Qué datos se recolectan
+
+* Cómo se almacena
+
+* Cómo se integran
+
+* Cómo se usan dentro de la organización
+
+Concepto clave: Data Blueprint
+Es el plano maestro que conecta la estrategia del negocio con la infraestructura tecnológica.
+________________
+
+
+2. Datos Operacionales vs. Analíticos
+
+
+Característica
+	Datos Operacionales (OLTP)
+	Datos Analíticos (OLAP)
+	Propósito
+	Hacer que el negocio funcione hoy
+	Entender qué pasó y qué pasará
+	Ejemplo
+	Registrar una venta, cambiar contraseña
+	Calcular crecimiento anual
+	Volumen
+	Pequeño por transacción
+	Masivo (millones de filas)
+	Estructura
+	Normalizada
+	Desnormalizada
+	Usuario
+	Apps, cajeros, clientes
+	Analistas, directivos, modelos ML
+	Regla mental:
+ OLTP = Transacción (rápido, operativo)
+OLAP = Análisis (profundo, histórico)
+________________
+
+
+3. Los Componentes del Ecosistema
+El camino del dato se conoce comúnmente como el Data Pipeline (tubería de datos). Se divide en 5 etapas clave:
+   1. Fuentes de Datos: Donde nace el dato (App móvil, base de datos de la tienda, sensores IoT, logs, bases de datos OLTP).
+   2. Ingesta: El proceso de mover los datos desde su origen hasta nuestro sistema de destino. 
+   3. Procesamiento: Aquí limpiamos el dato. Si un usuario puso su edad como "20a", aquí lo corregimos.
+   4. Almacenamiento: En esta etapa se decide dónde y cómo persisten los datos para que puedan ser consultados posteriormente.
+   5. Consumo: El destino final (Un dashboard en PowerBI, una hoja de Excel o un modelo de Machine Learning).
+________________
+
+
+4. Modelos de Arquitectura según Infraestructura
+La elección de la infraestructura no depende de moda tecnológica, sino de restricciones financieras, regulatorias y estratégicas. Existen tres enfoques principales: On-Premise, Cloud y Híbrido.
+________________
+
+
+4.1 Arquitectura On-Premise
+Modelo donde la infraestructura (servidores, almacenamiento, redes) se encuentra físicamente en instalaciones propias de la organización.
+________________
+
+
+4.2 Arquitectura Cloud (Cloud-Native)
+Modelo donde la infraestructura es provista por terceros (AWS, Azure, GCP) bajo esquema de pago por uso.
+________________
+
+
+4.3 Arquitectura Híbrida
+Modelo que combina infraestructura On-Premise y Cloud.
+Características:
+   * Datos sensibles permanecen localmente
+
+   * Procesamiento analítico o cargas variables se ejecutan en la nube
+
+   * Permite transición progresiva
+________________
+
+
+Criterios de Decisión Arquitectónica
+La selección debe evaluarse considerando:
+      * Regulación y cumplimiento (Leyes)
+
+      * Modelo financiero (CAPEX vs OPEX)
+
+      * Escalabilidad requerida
+
+      * Madurez técnica del equipo
+
+      * Estrategia de crecimiento
+________________
+
+
+5. Batch vs. Streaming
+Batch
+Definición General (Lote - Batch): Un lote (o batch) es un conjunto de tareas o transacciones que se agrupan y ejecutan como una única unidad, generalmente sin intervención manual, en un momento predefinido o cuando el volumen de datos alcanza un umbral.
+
+
+Ingesta por Batch : En el contexto de la Arquitectura de Datos, la ingesta por batch se refiere al proceso de mover o cargar volúmenes de datos desde la fuente al destino de forma periódica e intermitente (ej. cada hora, cada noche).
+         * Ejemplo: Las transacciones de venta diarias (registradas durante todo el día) se recopilan y procesan todas juntas cada noche para generar el informe de ventas consolidado del día anterior.
+
+         * Más barato y simple
+Streaming
+
+
+Definición General (Transmisión - Streaming): Una transmisión (streaming) es un flujo continuo e ilimitado de datos que se procesan a medida que se generan, en tiempo real. Los datos son tratados como una secuencia de eventos individuales y son consumidos inmediatamente después de su aparición.
+
+
+Ingesta por Streaming: En el contexto de la Arquitectura de Datos, la ingesta por streaming se refiere al proceso de mover o cargar datos de forma continua desde la fuente al destino con una latencia mínima, permitiendo que las decisiones se tomen en el momento.
+            * Procesamiento inmediato
+
+            * Ejemplo: Piensa en una empresa de logística que rastrea miles de envíos. Si un sensor en un camión detecta un aumento brusco de temperatura mientras el camión está en movimiento (indicando un posible problema con la refrigeración de productos sensibles, como medicamentos), el sistema debe alertar al conductor y a la central de inmediato. Si esta alerta se genera solo al final del día (procesamiento batch), la mercancía ya se habría dañado.
+Tabla Comparativa (Batch vs. Streaming):
+
+
+Característica
+	Batch
+	Streaming
+	Latencia
+	Alta (minutos, horas)
+	Baja (segundos, milisegundos)
+	Flujo de Datos
+	Paquetes/Lotes fijos
+	Continuo/Ilimitado
+	Complejidad
+	Baja a Media
+	Media a Alta
+	Costo
+	Menor (recursos intermitentes)
+	Mayor (recursos constantes)
+	Aplicación Típica
+	Reportes diarios, ETL nocturno
+	Detección de fraude, Recomendaciones en tiempo real
+	Regla práctica:
+               * Si la decisión puede esperar → Batch
+
+               * Si la decisión impacta en segundos → Streaming
+________________
+
+
+
+
+5. Conceptos clave
+
+
+Concepto
+	Definición
+	Ejemplo Técnico/Práctico
+	Latencia (Latency)
+	Tiempo que tarda una solicitud en viajar del origen al destino y regresar con una respuesta.
+	Baja: 40 ms por consulta. Práctico: Detección de fraude (<100 ms).
+La latencia es menor a 100ms
+	Throughput (Caudal)
+	Cantidad de datos o transacciones que un sistema puede procesar por unidad de tiempo.
+	"El pipeline soporta 25,000 eventos por segundo." Práctico: E-commerce en Black Friday (200,000 transacciones/min).
+	Disponibilidad (Availability)
+	Porcentaje de tiempo que el sistema está operativo.
+	"Disponibilidad del 99.95% anual." (99.9% es 8.7 horas de caída/año).
+	SLA (Service Level Agreement)
+	Acuerdo formal que establece métricas mínimas de rendimiento.
+	"El SLA Establece latencia baja (<200 ms) y disponibilidad del 99.9%."
+	Tolerancia a Fallos (Fault Tolerance)
+	Capacidad del sistema para continuar funcionando aunque un componente falle.
+	"Si un nodo falla, otro asume la carga." (Alta tolerancia).
+	Consistencia (Consistency)
+	Garantía de que todos los usuarios ven el mismo dato actualizado.
+	Fuerte: Priorizada para transacciones bancarias (dato inmediato). 
+Eventual: Usada en redes sociales (sincronización después de un tiempo).
+	Escalabilidad Vertical
+	Aumentar recursos en un solo servidor (más CPU, RAM).
+	"Aumentamos la RAM de 32GB a 128GB." (Limitación: techo físico).
+	Escalabilidad Horizontal
+	Agregar más servidores al sistema (nodos).
+	"Agregamos 10 nodos al clúster." (Para aumentar el throughput).
+	Elasticidad
+	Capacidad de aumentar o reducir recursos automáticamente según la demanda.
+	"Durante alta demanda escala a 50 servidores y luego reduce a 10." (Común en cloud).
+	Resumen estructural
+Arquitectura de Datos = Diseño estratégico + Infraestructura técnica
+Pipeline = FIPAC
+OLTP mantiene el negocio vivo
+OLAP permite entenderlo
+Batch optimiza costo
+Streaming optimiza velocidad
+Cloud permite escalar horizontalmente
+
+
+🧠 Tips Nemotécnicos y Ayudas de Memoria
+                  * Para los componentes, recuerda la palabra "FIPAC":
+                  * Fuentes
+                  * Ingesta
+                  * Procesamiento
+                  * Almacenamiento
+                  * Consumo
+                  * OLTP vs OLAP:
+                  * OLTP = Transacción (La "T" de tienda, ocurre rápido).
+                  * OLAP = Análisis (La "A" de analista, toma tiempo).
